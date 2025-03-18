@@ -16,7 +16,7 @@
                         fill="#7367F0" />
                 </svg>
             </span> -->
-            <img src="../../../assets/img/logos/logoDPEI-removebg-preview.png" alt="" style="width: 40px; height: 40px;">
+            <img src="../../../assets/img/icons/brands/bootstrap-logo.png" alt="" style="width: 40px; height: 40px;">
             <span class="app-brand-text demo menu-text fw-bold">Planificacion</span>
         </a>
 
@@ -37,24 +37,19 @@
                 <div>Administrar Usuarios</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item" id="opcion_rol">
-                    <a class="menu-link">
-                        <div>Rol</div>
+                <li class="menu-item" >
+                    <a class="menu-link" th:href="@{/rol/ventana}">
+                        <div>Roles</div>
                     </a>
                 </li>
-                <li class="menu-item" id="opcion_persona">
-                    <a class="menu-link">
-                        <div>Persona</div>
+                <li class="menu-item" >
+                    <a class="menu-link" th:href="@{/persona/ventana}">
+                        <div>Personas</div>
                     </a>
                 </li>
-                <li class="menu-item" id="opcion_usuario">
-                    <a class="menu-link">
-                        <div>Usuario</div>
-                    </a>
-                </li>
-                <li class="menu-item" id="opcion_responsable">
-                    <a class="menu-link">
-                        <div>Responsable</div>
+                <li class="menu-item" >
+                    <a class="menu-link" th:href="@{/usuario/ventana}">
+                        <div>Usuarios</div>
                     </a>
                 </li>
             </ul>
@@ -62,84 +57,17 @@
         <li class="menu-item active open">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-wallet"></i>
-                <div>Adminitrar PEI</div>
+                <div>Adminitrar Actividades</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item" id="opcion_pei">
-                    <a class="menu-link">
-                        <div data-i18n="PEI">PEI</div>
+                <li class="menu-item">
+                    <a class="menu-link" th:href="@{/actividad/ventana}">
+                        <div data-i18n="Actividades">Actividades</div>
                     </a>
                 </li>
-                <!-- <li class="menu-item" id="opcion_area">
-                    <a class="menu-link">
-                        <div data-i18n="Área Estratégica">Área Estratégica</div>
-                    </a>
-                </li> -->
-                <li class="menu-item" id="opcion_politica">
-                    <a class="menu-link">
-                        <div data-i18n="Politica">Politica</div>
-                    </a>
-                </li>
-                <li class="menu-item" id="opcion_objetivo">
-                    <a class="menu-link">
-                        <div data-i18n="Objetivo">Objetivo</div>
-                    </a>
-                </li>
-                <li class="menu-item" id="opcion_indicador">
-                    <a class="menu-link">
-                        <div data-i18n="Indicador">Indicador</div>
-                    </a>
-                </li>
-                <li class="menu-item" id="opcion_resultado">
-                    <a class="menu-link">
-                        <div data-i18n="Resultado">Resultado</div>
-                    </a>
-                </li>
-                <li class="menu-item" id="opcion_metas">
-                    <a class="menu-link">
-                        <div data-i18n="Metas y Responsables">Metas y Responsables</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        
-        <!-- Apps & Pages -->
-        <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">POR DEFINIR</span>
-        </li>
-        <li class="menu-item" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE') || #lists.contains(session.roles.![nombre], 'EVALUADOR')}">
-            <a href="#" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-checklist"></i>
-                <div>Administrar Avances</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item" id="opcion_avances" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}">
-                    <a class="menu-link">
-                        <div>Avances</div>
-                    </a>
-                </li>
-                <li class="menu-item" id="opcion_evaluar_avances" th:if="${#lists.contains(session.roles.![nombre], 'EVALUADOR')}">
-                    <a class="menu-link">
-                        <div>Evaluar Avance</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="menu-item" id="grafica_estadistica">
-            <a class="menu-link">
-                <i class="menu-icon tf-icons ti ti-mail"></i>
-                <div>Grafica</div>
-            </a>
-        </li>
-        <li class="menu-item">
-            <a href="#" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons ti ti-businessplan"></i>
-                <div>Presupuesto</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item" id="opcion_asignar">
-                    <a class="menu-link">
-                        <div>Techo Presupuestario</div>
+                <li class="menu-item">
+                    <a class="menu-link" href="#">
+                        <div data-i18n="Asignaciones">Asignaciones</div>
                     </a>
                 </li>
             </ul>

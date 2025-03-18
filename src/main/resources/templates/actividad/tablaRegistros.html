@@ -1,9 +1,9 @@
 <div class="card ">
   <div class="card-header d-flex justify-content-lg-between">
-    <h5>Registros Personas</h5>
+    <h5>Registros Actividades</h5>
     <button type="button" class="btn btn-primary" onclick="cargarFormulario()" data-bs-toggle="modal"
       data-bs-target="#modalFormularioPersona">
-      <i class="fa-solid fa-user-plus"></i> Agregar Persona
+      <i class="fa-solid fa-plus"></i> Agregar Actividad
     </button>
   </div>
   <div class="card-datatable table-responsive pt-0">
@@ -11,23 +11,27 @@
       <thead >
         <tr>
           <th>#</th>
-          <th>C.I.</th>
-          <th>Nombre Completo</th>
+          <th>Descripción</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Fecha Registro</th>
           <th>Opciones</th>
         </tr>
       </thead>
       <tbody class="animate__animated animate__bounceInDown">
-        <tr th:each="persona, cont: ${personas}">
+        <tr th:each="actividad, cont: ${actividades}">
           <th th:text="${cont.count}"></th>
-          <th th:text="${persona.ci}"></th>
-          <th th:text="${persona.nombreCompleto}"></th>
+          <th th:text="${actividad.descripcion}"></th>
+          <th th:text="${#dates.format(actividad.fechaInicio, 'dd/MM/yyyy')}"></th>
+          <th th:text="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"></th>
+          <th th:text="${#dates.format(actividad.registro, 'dd/MM/yyyy hh:mm a')}"></th>
           <th>
             <button type="button" class="btn btn-sm btn-primary"
-              th:onclick="cargarFormularioEdit([[${persona.idPersona}]])" data-bs-toggle="modal"
+              th:onclick="cargarFormularioEdit([[${actividad.idActividad}]])" data-bs-toggle="modal"
               data-bs-target="#modalFormularioPersona">
               <i class="fa-solid fa-pen-to-square"></i> Editar
             </button>
-            <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminar([[${persona.nombreCompleto}]],[[${persona.idPersona}]])">
+            <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminar([[${actividad.idActividad}]])">
               <i class="fa-solid fa-trash"></i> Eliminar
             </button>
           </th>

@@ -31,8 +31,16 @@ public class indexController {
 
     private final UtilidadesService utilidadesService;
     
+
     @GetMapping("/")
-    public String getMethodName(HttpServletRequest request) {
+    public String getMethodName() {
+        return "redirect:/ControlSeguimiento";
+    }
+    
+    //@ValidarUsuarioAutenticado
+    @GetMapping("/ControlSeguimiento")
+    @Transactional
+    public String inicio(HttpServletRequest request) {
 
         Usuario usuario = usuarioService.buscarPorNombreUser("admin1");
         HttpSession sessionAdministrador = request.getSession(true);
@@ -48,21 +56,11 @@ public class indexController {
             sessionAdministrador.setAttribute("persona", personaService.findById(usuario.getPersona().getIdPersona()));
             sessionAdministrador.setAttribute("roles", new ArrayList<Rol>(usuario.getRoles()));
             System.out.println("USUARIO INICIADO");
-            return "redirect:/ControlSeguimiento";
-    }
 
-    // @GetMapping("/")
-    // public String getMethodName() {
-    //     return "redirect:/ControlSeguimiento";
-    // }
-    
-    //@ValidarUsuarioAutenticado
-    @GetMapping("/ControlSeguimiento")
-    @Transactional
-    public String inicio(HttpServletRequest request) {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        //Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        usuario = (Usuario) request.getSession().getAttribute("usuario");
         logger.info("Usuario en sesión: {}", usuario.getPersona().getNombre());
-        return "index2";
+        return "index";
         
     }
 

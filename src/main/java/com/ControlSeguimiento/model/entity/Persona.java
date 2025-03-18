@@ -25,6 +25,7 @@ public class Persona extends AuditoriaConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPersona;
+    private Long codFuncionario;
     private String nombre;
     private String paterno;
     private String materno;

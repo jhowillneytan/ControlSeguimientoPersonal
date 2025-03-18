@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ControlSeguimiento.model.entity.Rol;
 import com.ControlSeguimiento.model.entity.Usuario;
+import com.ControlSeguimiento.model.service.PersonaService;
 import com.ControlSeguimiento.model.service.UsuarioService;
 import com.ControlSeguimiento.model.service.UtilidadesService;
 
@@ -26,6 +27,7 @@ public class indexController {
     private static final Logger logger = LoggerFactory.getLogger(indexController.class);
 
     private final UsuarioService usuarioService;
+    private final PersonaService personaService;
 
     private final UtilidadesService utilidadesService;
     
@@ -43,7 +45,7 @@ public class indexController {
                 e.printStackTrace();
             }
             sessionAdministrador.setAttribute("usuario", usuario);
-            sessionAdministrador.setAttribute("persona", usuario.getPersona());
+            sessionAdministrador.setAttribute("persona", personaService.findById(usuario.getPersona().getIdPersona()));
             sessionAdministrador.setAttribute("roles", new ArrayList<Rol>(usuario.getRoles()));
             System.out.println("USUARIO INICIADO");
             return "redirect:/ControlSeguimiento";
@@ -60,7 +62,7 @@ public class indexController {
     public String inicio(HttpServletRequest request) {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         logger.info("Usuario en sesión: {}", usuario.getPersona().getNombre());
-        return "index";
+        return "index2";
         
     }
 

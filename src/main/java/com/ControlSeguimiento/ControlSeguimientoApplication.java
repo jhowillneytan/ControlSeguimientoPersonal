@@ -1,5 +1,9 @@
 package com.ControlSeguimiento;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,8 +26,17 @@ import com.ControlSeguimiento.model.service.UtilidadesService;
 @SpringBootApplication
 public class ControlSeguimientoApplication {
 	private static final Logger logger = LoggerFactory.getLogger(ControlSeguimientoApplication.class);
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		SpringApplication.run(ControlSeguimientoApplication.class, args);
+
+		Path rootPathCarnet = Paths.get("uploads/");
+		String rutaDirectorioCarnet = rootPathCarnet + "";
+		if (!Files.exists(rootPathCarnet)) {
+			Files.createDirectories(rootPathCarnet);
+			System.out.println("Directorio creado: " + rutaDirectorioCarnet);
+		} else {
+			System.out.println("El directorio ya existe: " + rutaDirectorioCarnet);
+		}
 	}
 
 	@Bean

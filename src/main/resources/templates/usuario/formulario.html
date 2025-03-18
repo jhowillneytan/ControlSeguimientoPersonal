@@ -1,0 +1,111 @@
+<div class="modal-header">
+    <h4 class="modal-title" th:text="${edit}? 'Modificar Usuario' : 'Registrar Usuario'"></h4>
+    <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+</div>
+<form id="formularioUsuario" method="post"
+    th:action="${edit}? @{/usuario/ModificarUsuario} : @{/usuario/RegistrarUsuario}" novalidate>
+    <input type="hidden" th:if="${edit != null}" th:field="${usuario.idUsuario}">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="modalEditUserFirstName">Nombre de Usuario</label>
+                <input type="text" th:field="${usuario.nombre}" class="form-control"
+                    placeholder="Introduzca un nombre de usuario" required />
+                <div class="valid-feedback">Correcto!</div>
+                <div class="invalid-feedback">Porfavor Introduzca un Nombre.</div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label class="form-label" for="modalEditUserLastName">Contraseña</label>
+                <input type="text" th:field="${usuario.password}" class="form-control"
+                    placeholder="Introduzca una contraseña" required />
+                <div class="valid-feedback">Correcto!</div>
+                <div class="invalid-feedback">Porfavor Introduzca una Contraseña.</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <label for="select2Basic" class="form-label">Persona</label>
+                <select id="select2Basic" class="select2 form-select form-select-lg" data-allow-clear="true"
+                    th:field="${usuario.persona}">
+                    <option th:each="persona : ${personas}" th:value="${persona.idPersona}"
+                        th:selected="${persona == usuario.persona}"
+                        th:text="${persona.nombre + ' ' + persona.paterno + ' ' + persona.materno + ' - ' + persona.ci}">
+                    </option>
+                </select>
+                <div class="valid-feedback">Correcto!</div>
+                <div class="invalid-feedback">Debe seleccionar a una persona.</div>
+            </div>
+            <div class="col-12 col-md-6">
+                <label for="select2Primary" class="form-label">Roles</label>
+                <div class="select2-primary">
+                    <select id="select2Primary" class="select2 form-select" th:field="${usuario.roles}" multiple>
+                        <option th:each="rol: ${roles}" th:value="${rol.idRol}" th:text="${rol.nombre}"
+                            th:selected="${rol == usuario.roles}"></option>
+                    </select>
+                    <div class="valid-feedback">Correcto!</div>
+                    <div class="invalid-feedback">Debe seleccionar un o varios roles.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-12">
+                <input type="submit" class="btn btn-success" th:value="${edit}? 'Guardar Cambios': 'Guardar Registro'">
+                <a type="submit" class="btn btn-secondary" style="color: white;" data-bs-dismiss="modal">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        $('#formularioUsuario').submit(function (event) {
+            event.preventDefault();
+            if (this.checkValidity() === false) {
+                $(this).addClass('was-validated');
+                return;
+            }
+            var form = $(this)[0];
+            var formData = new FormData(form);
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                contentType: false,  // No establecer el tipo de contenido aquí
+                processData: false,  // No procesar los datos
+                success: function (response) {
+
+                    if (response === 'Se realizó el registro correctamente') {
+                        cargarTabla();
+                        cargarFormulario();
+                        Swal.fire(
+                            'Registrado!',
+                            response + '.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Imposible Registrar!',
+                            response + '.',
+                            'error'
+                        );
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire(
+                        'Imposible Registrar!',
+                        'Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error,
+                        'error'
+                    );
+                    console.error(error);
+                    // Manejo de errores
+                }
+            });
+        });
+
+    });
+</script>

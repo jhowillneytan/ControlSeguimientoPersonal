@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ControlSeguimiento.model.entity.Actividad;
 import com.ControlSeguimiento.model.entity.Asignacion;
-import com.ControlSeguimiento.model.entity.Proyecto;
+import com.ControlSeguimiento.model.entity.Persona;
 import com.ControlSeguimiento.model.entity.Usuario;
 import com.ControlSeguimiento.model.service.ActividadService;
 import com.ControlSeguimiento.model.service.AsignacionService;
+import com.ControlSeguimiento.model.service.EmailServiceImpl;
 import com.ControlSeguimiento.model.service.PersonaService;
 import com.ControlSeguimiento.model.service.PrioridadService;
 import com.ControlSeguimiento.model.service.ProyectoService;
@@ -30,12 +31,10 @@ import com.ControlSeguimiento.model.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 
 @Controller
-@RequestMapping("/actividad")
-public class actividadController {
-
+@RequestMapping("/asignacion")
+public class asignacionController {
     @Autowired
     private ActividadService actividadService;
 
@@ -54,26 +53,31 @@ public class actividadController {
     @Autowired
     private ProyectoService proyectoService;
 
+    @Autowired
+    private EmailServiceImpl emailServiceImpl;
+
     // @ValidarUsuarioAutenticado
     @GetMapping("/ventana")
     public String inicio(HttpSession session, Model model) {
 
         model.addAttribute("opcionSeccionActividades", "true");
-        model.addAttribute("opcionActividades", "true");
+        model.addAttribute("opcionAsignaciones", "true");
 
         if (session.getAttribute("usuario") == null) {
             // La sesión ha expirado o no existe
             return "redirect:/form-login";
         }
 
-        return "actividad/ventana";
+        return "asignacion/ventana";
     }
 
     // @ValidarUsuarioAutenticado
     @PostMapping("/tablaRegistros")
-    public String tablaRegistros(Model model) {
-        model.addAttribute("actividades", actividadService.listarActividades());
-        return "actividad/tablaRegistros";
+    public String tablaRegistros(Model model, HttpSession session) {
+        Usuario u = (Usuario)session.getAttribute("usuario");
+        Usuario usuario = usuarioService.findById(u.getIdUsuario());
+        model.addAttribute("asignaciones", asignacionService.listarAsignacionesPorIdPersona(usuario.getPersona().getIdPersona()));
+        return "asignacion/tablaRegistros";
     }
 
     // @ValidarUsuarioAutenticado
@@ -82,7 +86,7 @@ public class actividadController {
         model.addAttribute("actividad", new Actividad());
         model.addAttribute("prioridades", prioridadService.findAll());
         model.addAttribute("proyectos", proyectoService.listar());
-        return "actividad/formulario";
+        return "asignacion/formulario";
     }
 
     // @ValidarUsuarioAutenticado
@@ -92,14 +96,14 @@ public class actividadController {
         model.addAttribute("prioridades", prioridadService.findAll());
         model.addAttribute("proyectos", proyectoService.listar());
         model.addAttribute("edit", "true");
-        return "actividad/formulario";
+        return "asignacion/formulario";
     }
 
     @PostMapping("/ventanaAsignaciones/{id}")
     public String ventanaAsignaciones(Model model, @PathVariable("id") Long id) {
         model.addAttribute("actividad", actividadService.findById(id));
         model.addAttribute("personas", personaService.findAll());
-        return "actividad/asignaciones";
+        return "asignacion/asignaciones";
     }
 
     // @ValidarUsuarioAutenticado
@@ -150,6 +154,7 @@ public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Vali
         actividad.setDescripcion(a.getDescripcion());
         actividad.setPrioridad(a.getPrioridad());
         actividad.setProgreso(a.getProgreso());
+        actividad.setProyecto(a.getProyecto());
         actividadService.save(actividad);
         return ResponseEntity.ok("Se realizó el registro correctamente");
     }
@@ -180,10 +185,23 @@ public ResponseEntity<String> GuardarAsignaciones(HttpServletRequest request,
         // Crear nuevas asignaciones si hay personas seleccionadas
         if (idPersonas != null && idPersonas.length > 0) {
             for (Long idPersona : idPersonas) {
+                Persona persona = personaService.findById(idPersona);
+
+                String mensaje = """
+                        <h1>¡Sistema de Control de Actividades de RRHH!</h1>
+                        <p>Estimado/a %s, se le ha asignado la actividad: %s</p>
+                        <p>Por favor, ingrese al sistema para revisar los detalles de la actividad.</p>
+                """;
+                mensaje = String.format(mensaje, persona.getNombreCompleto(), actividad.getDescripcion());
+
+				emailServiceImpl.enviarEmail(persona.getCorreo(),
+						"Informaciones RRHH: ",
+						mensaje);
+
                 Asignacion asignacion = new Asignacion();
                 asignacion.setEstado("ACTIVO");
                 asignacion.setRegistro(new Date());
-                asignacion.setPersona(personaService.findById(idPersona));
+                asignacion.setPersona(persona);
                 asignacion.setActividad(actividad);
                 
                 // Guardar la asignación

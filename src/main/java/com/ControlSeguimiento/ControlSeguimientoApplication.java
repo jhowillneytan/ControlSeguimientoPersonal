@@ -71,9 +71,11 @@ public class ControlSeguimientoApplication {
 				Persona persona = personaService.buscarPorCi(cis[i]);
 				if (persona == null) {
 					persona = new Persona();
+					persona.setCodFuncionario(0L);
 					persona.setNombre(nombres[i]);
 					persona.setPaterno("ApellidoP" + (i + 1));
 					persona.setMaterno("ApellidoM" + (i + 1));
+					persona.setCorreo("admin@gmail.com");
 					persona.setCi(cis[i]);
 					persona.setEstado("ACTIVO");
 					personaService.save(persona);

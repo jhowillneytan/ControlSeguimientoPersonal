@@ -84,6 +84,7 @@ public class personaController {
             person.setNombre(persona.getNombre());
             person.setPaterno(persona.getPaterno());
             person.setMaterno(persona.getMaterno());
+            person.setCorreo(persona.getCorreo());
             person.setModificacion(new Date());
             personaService.save(person);
             return ResponseEntity.ok("Se realizó el registro correctamente");

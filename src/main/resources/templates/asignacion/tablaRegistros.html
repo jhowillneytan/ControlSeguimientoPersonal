@@ -1,0 +1,97 @@
+<div class="card ">
+  <div class="card-header d-flex justify-content-lg-between">
+    <h5>Registros de Actividades Asignadas</h5>
+  </div>
+  <div class="card-datatable table-responsive pt-0">
+    <table class="datatables-basic table table-hover" id="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Descripción</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Responsables</th>
+          <th>Prioridad</th>
+          <th>Estado</th>
+          <th>Progreso</th>
+          <th>Fecha Registro</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody class="animate__animated animate__fadeIn">
+        <tr th:each="asignacion, cont: ${asignaciones}">
+          <td th:text="${cont.count}"></td>
+          <td th:text="${asignacion.actividad.descripcion}"></td>
+          <td th:text="${#dates.format(asignacion.actividad.fechaInicio, 'dd/MM/yyyy')}"></td>
+          <td th:text="${#dates.format(asignacion.actividad.fechaFin, 'dd/MM/yyyy')}"></td>
+          <td>
+            <ul class="list-group">
+              <li class="list-group-item list-group-item-action" th:each="asig: ${asignacion.actividad.asignaciones}"
+                th:text="${asig.persona.nombreCompleto}"></li>
+            </ul>
+          </td>
+          <td>
+            <span class="badge rounded-pill bg-primary" th:if="${asignacion.actividad.prioridad?.nivel == 'ALTA'}"
+              th:text="${asignacion.actividad.prioridad?.nivel}"></span>
+            <span class="badge rounded-pill bg-warning" th:if="${asignacion.actividad.prioridad?.nivel == 'MEDIA'}"
+              th:text="${asignacion.actividad.prioridad?.nivel}"></span>
+            <span class="badge rounded-pill bg-success" th:if="${asignacion.actividad.prioridad?.nivel == 'BAJA'}"
+              th:text="${asignacion.actividad.prioridad?.nivel}"></span>
+          </td>
+          <td>
+            <span class="badge rounded-pill text-bg-primary" th:if="${asignacion.actividad.estado == 'EN PROCESO'}"
+              th:text="${asignacion.actividad.estado}"></span>
+            <span class="badge rounded-pill text-bg-warning" th:if="${asignacion.actividad.estado == 'ATRASADO'}"
+              th:text="${asignacion.actividad.estado}"></span>
+            <span class="badge rounded-pill text-bg-success" th:if="${asignacion.actividad.estado == 'FINALIZADO'}"
+              th:text="${asignacion.actividad.estado}"></span>
+          </td>
+          <td>
+            <div class="progress" style="height: 25px;">
+              <div class="progress-bar" role="progressbar" 
+                   th:style="'width: ' + ${asignacion.actividad.progreso} + '%'" 
+                   th:attr="aria-valuenow=${asignacion.actividad.progreso}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100"
+                   th:text="${#numbers.formatDecimal(asignacion.actividad.progreso, 1, 1)} + ' %'">
+              </div>
+            </div>
+          </td>
+          <td th:text="${#dates.format(asignacion.actividad.registro, 'dd/MM/yyyy hh:mm a')}"></td>
+          <td>
+            
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+  $('#data-table').DataTable({
+    language: {
+      "sProcessing": "Procesando...",
+      "sLengthMenu": "Mostrar _MENU_ registros",
+      "sZeroRecords": "No se encontraron resultados",
+      "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix": "",
+      "sSearch": "Buscar:",
+      "sUrl": "",
+      "sInfoThousands": ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst": "Primero",
+        "sLast": "Último",
+        "sNext": "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    }
+  });
+</script>

@@ -43,5 +43,11 @@ public class AsignacionServiceImpl implements AsignacionService{
     public List<Asignacion> findByActividad(Actividad actividad) {
         return dao.findByActividad(actividad);
     }
+
+    @Override
+    public List<Asignacion> listarAsignacionesPorIdPersona(Long idPersona) {
+        // TODO Auto-generated method stub
+        return dao.listarAsignacionesPorIdPersona(idPersona);
+    }
     
 }

@@ -30,7 +30,7 @@
           <td th:text="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"></td>
           <td>
             <ul class="list-group">
-              <li class="list-group-item" th:each="asig: ${actividad.asignaciones}"
+              <li class="list-group-item list-group-item-action" th:each="asig: ${actividad.asignaciones}"
                 th:text="${asig.persona.nombreCompleto}"></li>
             </ul>
           </td>

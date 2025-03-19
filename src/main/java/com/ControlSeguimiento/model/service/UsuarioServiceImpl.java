@@ -55,5 +55,11 @@ public class UsuarioServiceImpl implements UsuarioService{
     public Usuario getUsuarioPassword(String usuario, String password) {
         return usuarioDao.getUsuarioPassword(usuario, password);
     }
+
+    @Override
+    public Usuario buscarPorIdPersona(Long idPersona) {
+        // TODO Auto-generated method stub
+        return usuarioDao.buscarPorIdPersona(idPersona);
+    }
     
 }

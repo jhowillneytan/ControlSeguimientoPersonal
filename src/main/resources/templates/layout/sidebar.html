@@ -70,8 +70,8 @@
                         <div data-i18n="Proyectos">Proyectos</div>
                     </a>
                 </li>
-                <li th:class="${opcionActividades == 'true'}? 'menu-item active': 'menu-item'" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}">
-                    <a class="menu-link" th:href="@{/actividad/ventana}">
+                <li th:class="${opcionAsignaciones == 'true'}? 'menu-item active': 'menu-item'" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}">
+                    <a class="menu-link" th:href="@{/asignacion/ventana}">
                         <div data-i18n="Asignaciones">Asignaciones</div>
                     </a>
                 </li>

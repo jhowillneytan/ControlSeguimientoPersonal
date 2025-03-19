@@ -53,8 +53,13 @@ public class PersonaServiceImpl implements PersonaService {
 
     @Override
     public Persona buscarPersonaPorIdUsuario(Long idUsuario) {
-        // TODO Auto-generated method stub
         return personaDao.buscarPersonaPorIdUsuario(idUsuario);
+    }
+
+    @Override
+    public List<Persona> listarPersonasAsignadaPorIdActividad(Long idActividad) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'listarPersonasAsignadaPorIdActividad'");
     }
 
 }

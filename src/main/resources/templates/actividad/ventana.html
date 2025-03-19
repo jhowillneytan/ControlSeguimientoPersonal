@@ -43,6 +43,12 @@
               </div>
             </div>
 
+            <div class="modal fade" id="modalAsignaciones" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content" id="contenidoModalAsignaciones"></div>
+              </div>
+            </div>
+
 
           </div>
           <!-- / Content -->
@@ -105,6 +111,17 @@
 
     function eliminar(nombre, id) {
       eliminarRegistroAlert(nombre, id, "/actividad/eliminar", cargarTabla);
+    }
+
+    function cargarModalAsignaciones(id) {
+      $.ajax({
+        type: 'POST',
+        url: "/actividad/ventanaAsignaciones/"+id,  // Ruta del metodo del controlador en Spring Boot
+        success: function (response) {
+          $("#contenidoModalAsignaciones").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+
+        }
+      });
     }
   </script>
 </body>

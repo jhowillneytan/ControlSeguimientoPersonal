@@ -1,0 +1,91 @@
+<div class="modal-header">
+  <h4 class="modal-title">Asignaciones</h4>
+  <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+</div>
+<form id="formularioRegistroAsignacion" method="post"
+  th:action="@{/actividad/GuardarAsignaciones}" novalidate>
+  <input type="hidden" th:field="${actividad.idActividad}">
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 col-md-12">
+        <label for="select2Primary" class="form-label">Personas</label>
+        <div class="select2-primary">
+          <select id="select2Primary" class="select2 form-select" name="asignados" multiple>
+            <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
+              th:selected="${#lists.contains(actividad.asignaciones.![persona], persona)}"></option>
+          </select>
+          <div class="valid-feedback">Correcto!</div>
+          <div class="invalid-feedback">Debe seleccionar una o varias personas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-12">
+        <input type="submit" class="btn btn-success" th:value="${edit}? 'Guardar Cambios': 'Guardar Registro'">
+        <a type="submit" class="btn btn-secondary" style="color: white;" data-bs-dismiss="modal">Cancelar</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  $(document).ready(function () {
+
+    // // Aplicar máscara a todos los elementos con clase datepickerD
+    // const dateInputs = $('.datepickerD');
+    // dateInputs.mask('99/99/9999');
+
+    $('.select2').select2({
+      dropdownParent: $('#formularioRegistroAsignacion')  // Especificar el parent para el dropdown
+    })
+
+    $('#formularioRegistroAsignacion').submit(function (event) {
+      event.preventDefault();
+      if (this.checkValidity() === false) {
+        $(this).addClass('was-validated');
+        return;
+      }
+      var form = $(this)[0];
+      var formData = new FormData(form);
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        contentType: false,  // No establecer el tipo de contenido aquí
+        processData: false,  // No procesar los datos
+        success: function (response) {
+
+          if (response === 'Se realizaron las asignaciones correctamente') {
+            cargarTabla();
+            cargarFormulario();
+            Swal.fire(
+              'Registrado!',
+              response + '.',
+              'success'
+            );
+          } else {
+            Swal.fire(
+              'Imposible Registrar!',
+              response + '.',
+              'error'
+            );
+          }
+
+        },
+        error: function (xhr, status, error) {
+          Swal.fire(
+            'Imposible Registrar!',
+            'Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error,
+            'error'
+          );
+          console.error(error);
+          // Manejo de errores
+        }
+      });
+    });
+
+  });
+</script>

@@ -9,7 +9,8 @@
     <div class="row">
       <div class="col-12 col-md-12">
         <label class="form-label" for="modalEditUserFirstName">Descripción</label>
-          <textarea class="form-control" th:field="${actividad.descripcion}" placeholder="Introduzca Introduzca la Descripción de la Actividad"  required></textarea>
+        <textarea class="form-control" th:field="${actividad.descripcion}"
+          placeholder="Introduzca Introduzca la Descripción de la Actividad" required></textarea>
         <div class="valid-feedback">Correcto!</div>
         <div class="invalid-feedback">Porfavor Introduzca la Descripción.</div>
       </div>
@@ -17,15 +18,15 @@
     <div class="row">
       <div class="col-12 col-md-6">
         <label class="form-label" for="modalEditUserFirstName">Fecha Inicio</label>
-        <input type="text" th:field="${actividad.fechaInicio}" class="form-control datepickerD" placeholder="__/__/___"
-          required />
+        <input type="text" name="fechaInicio" th:value="${#dates.format(actividad.fechaInicio, 'dd/MM/yyyy')}"
+          class="form-control datepickerD" placeholder="__/__/___" required />
         <div class="valid-feedback">Correcto!</div>
         <div class="invalid-feedback">Porfavor Introduzca una fecha de inicio.</div>
       </div>
       <div class="col-12 col-md-6">
         <label class="form-label" for="modalEditUserFirstName">Fecha Final</label>
-        <input type="text" th:field="${actividad.fechaFin}" class="form-control datepickerD" placeholder="__/__/____"
-          required />
+        <input type="text" name="fechaFin" th:value="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"
+          class="form-control datepickerD" placeholder="__/__/____" required />
         <div class="valid-feedback">Correcto!</div>
         <div class="invalid-feedback">Porfavor Introduzca una fecha final.</div>
       </div>
@@ -45,17 +46,21 @@
   $(document).ready(function () {
 
     // Usar event delegation con jQuery moderno
-    $(document).on('focusin', '.datepickerD', function() {
-        $(this).datepicker({
-            format: 'dd/mm/yyyy',
-            autoclose: true,
-            language: 'es'
-        });
+    $(document).on('focusin', '.datepickerD', function () {
+      $(this).datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true,
+        language: 'es'
+      });
     });
-    
+
     // // Aplicar máscara a todos los elementos con clase datepickerD
     // const dateInputs = $('.datepickerD');
     // dateInputs.mask('99/99/9999');
+
+    $('.select2').select2({
+      dropdownParent: $('#formularioRegistro')  // Especificar el parent para el dropdown
+    })
 
     $('#formularioRegistro').submit(function (event) {
       event.preventDefault();

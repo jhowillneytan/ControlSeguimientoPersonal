@@ -3,6 +3,7 @@ package com.ControlSeguimiento.controllers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,11 +15,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ControlSeguimiento.model.entity.Actividad;
+import com.ControlSeguimiento.model.entity.Asignacion;
+import com.ControlSeguimiento.model.entity.Usuario;
 import com.ControlSeguimiento.model.service.ActividadService;
+import com.ControlSeguimiento.model.service.AsignacionService;
+import com.ControlSeguimiento.model.service.PersonaService;
+import com.ControlSeguimiento.model.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -27,6 +35,15 @@ public class actividadController {
 
     @Autowired
     private ActividadService actividadService;
+
+    @Autowired
+    private AsignacionService asignacionService;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+        @Autowired
+    private PersonaService personaService;
 
     // @ValidarUsuarioAutenticado
     @GetMapping("/ventana")
@@ -56,38 +73,107 @@ public class actividadController {
         return "actividad/formulario";
     }
 
+    @PostMapping("/ventanaAsignaciones/{id}")
+    public String ventanaAsignaciones(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("actividad", actividadService.findById(id));
+        model.addAttribute("personas", personaService.findAll());
+        return "actividad/asignaciones";
+    }
+
     // @ValidarUsuarioAutenticado
     @PostMapping("/Registrar")
-public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Validated Actividad actividad) {
+public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Validated Actividad actividad, HttpSession session,
+@RequestParam(value = "fechaInicio")String fechaInicio, @RequestParam(value = "fechaFin")String fechaFin) {
     try {
+        // Establecer estado de la actividad
         actividad.setEstado("ACTIVO");
         
-        //SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM-yyyy");
+        // Establecer las fechas en la entidad de actividad
+        actividad.setFechaInicio(convertirFecha(fechaInicio)); // Establecer la fecha de inicio convertida
+        actividad.setFechaFin(convertirFecha(fechaFin)); // Establecer la fecha de fin convertida
         
-        // Establecer fecha de registro como la fecha actual
+        // Establecer la fecha de registro como la fecha actual
         actividad.setRegistro(new Date());
         
+        Usuario u = (Usuario)session.getAttribute("usuario");
+        //Usuario usuario = usuarioService.findById(u.getIdUsuario());
+        actividad.setRegistroIdUsuario(u.getIdUsuario());
+
         // Guardar la actividad
         actividadService.save(actividad);
         
         return ResponseEntity.ok("Se realizó el registro correctamente");
+    } catch (ParseException e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error en el formato de fecha: " + e.getMessage());
     } catch (Exception e) {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en el registro: " + e.getMessage());
     }
 }
 
+
     // @ValidarUsuarioAutenticado
     @PostMapping("/Modificar")
-    public ResponseEntity<String> ModificarPersona(HttpServletRequest request, @Validated Actividad a) {
+    public ResponseEntity<String> ModificarPersona(HttpServletRequest request, @Validated Actividad a,
+    @RequestParam(value = "fechaInicio")String fechaInicio, @RequestParam(value = "fechaFin")String fechaFin) {
         Actividad actividad = actividadService.findById(a.getIdActividad());
-        actividad.setFechaInicio(a.getFechaInicio());
-        actividad.setFechaFin(a.getFechaFin());
+        try {
+            actividad.setFechaInicio(convertirFecha(fechaInicio));
+            actividad.setFechaFin(convertirFecha(fechaFin)); // Establecer la fecha de fin convertida
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } // Establecer la fecha de inicio convertida
         actividad.setDescripcion(a.getDescripcion());
         actividadService.save(actividad);
         return ResponseEntity.ok("Se realizó el registro correctamente");
     }
+
+    @PostMapping("/GuardarAsignaciones")
+public ResponseEntity<String> GuardarAsignaciones(HttpServletRequest request, 
+        @RequestParam(value = "idActividad") Long idActividad,
+        @RequestParam(value = "asignados", required = false) Long[] idPersonas) {
+    
+    try {
+        // Obtener la actividad por su ID
+        Actividad actividad = actividadService.findById(idActividad);
+        
+        if (actividad == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la actividad");
+        }
+        
+        // Limpiar asignaciones existentes
+        // Primero eliminar las asignaciones actuales de la base de datos
+        List<Asignacion> asignacionesActuales = asignacionService.findByActividad(actividad);
+        for (Asignacion asig : asignacionesActuales) {
+            asignacionService.deleteById(asig.getIdAsignacion());
+        }
+        
+        // Limpiar la lista en la entidad
+        actividad.getAsignaciones().clear();
+        
+        // Crear nuevas asignaciones si hay personas seleccionadas
+        if (idPersonas != null && idPersonas.length > 0) {
+            for (Long idPersona : idPersonas) {
+                Asignacion asignacion = new Asignacion();
+                asignacion.setEstado("ACTIVO");
+                asignacion.setRegistro(new Date());
+                asignacion.setPersona(personaService.findById(idPersona));
+                asignacion.setActividad(actividad);
+                
+                // Guardar la asignación
+                asignacionService.save(asignacion);
+            }
+        }
+        
+        return ResponseEntity.ok("Se realizaron las asignaciones correctamente");
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al guardar las asignaciones: " + e.getMessage());
+    }
+}
 
     // @ValidarUsuarioAutenticado
     @PostMapping("/eliminar/{id}")
@@ -96,6 +182,16 @@ public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Vali
         actividad.setEstado("ELIMINADO");
         actividadService.save(actividad);
         return ResponseEntity.ok("Registro Eliminado");
+    }
+
+    public static Date convertirFecha(String fechaStr) throws ParseException {
+        // Definir el formato de fecha original
+        SimpleDateFormat formatoOriginal = new SimpleDateFormat("dd/MM/yyyy");
+        
+        // Parsear la fecha del String al objeto Date
+        Date fecha = formatoOriginal.parse(fechaStr);
+        
+        return fecha;
     }
 
 }

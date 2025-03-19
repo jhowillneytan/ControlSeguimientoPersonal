@@ -12,6 +12,9 @@ public interface PersonaDao extends JpaRepository<Persona, Long>{
     @Query("SELECT p FROM Persona p WHERE p.estado != 'ELIMINADO'")
     List<Persona> listarPersonas();
 
+    @Query("SELECT a.persona FROM Asignacion a WHERE a.actividad.idActividad = ?1")
+    List<Persona> listarPersonasAsignadaPorIdActividad(Long idActividad);
+
     @Query("SELECT p FROM Persona p WHERE p.ci = ?1  AND p.estado != 'ELIMINADO'")
     Persona buscarPorCi(String ci);
 

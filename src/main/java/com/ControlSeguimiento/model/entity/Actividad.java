@@ -11,6 +11,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -33,6 +35,10 @@ public class Actividad extends AuditoriaConfig {
     private Date fechaFin;
 
     private String descripcion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_prioridad")
+    private Prioridad prioridad;
 
     @OneToMany(mappedBy = "actividad", fetch = FetchType.EAGER)
     private List<Asignacion> asignaciones;

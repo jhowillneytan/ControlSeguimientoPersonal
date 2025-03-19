@@ -81,6 +81,34 @@
   </div>
   <!-- / Layout wrapper -->
 
+  <!-- MODAL LOADING -->
+  <button type="button" data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="botonAbrirModalLoading"
+    style="display: none;"></button>
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body text-center" style="padding: 25px;">
+          <button style="display: none;" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            id="botonCerrarModalLoading"></button>
+          <div class="row">
+            <div class="center-body d-flex justify-content-center">
+              <div class="sk-chase sk-primary">
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+                <div class="sk-chase-dot"></div>
+              </div>
+            </div>
+          </div>
+          <h3 style="margin-bottom: 50px;" id="textoLoading">Cargando</h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div th:replace="~{layout/script :: script}"></div>
 
   <div th:replace="~{layout/editPerfil :: editPerfil}"></div>

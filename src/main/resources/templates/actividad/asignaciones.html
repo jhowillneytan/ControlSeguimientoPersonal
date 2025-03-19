@@ -47,6 +47,10 @@
         $(this).addClass('was-validated');
         return;
       }
+
+      $('#textoLoading').text('Procesando...');
+      $('#botonAbrirModalLoading').click();
+
       var form = $(this)[0];
       var formData = new FormData(form);
 
@@ -61,6 +65,7 @@
           if (response === 'Se realizaron las asignaciones correctamente') {
             cargarTabla();
             cargarFormulario();
+            $('#botonCerrarModalLoading').click();
             Swal.fire(
               'Registrado!',
               response + '.',

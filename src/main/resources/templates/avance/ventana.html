@@ -1,0 +1,76 @@
+<div class="container-xxl flex-grow-1 container-p-y" id="contenido">
+
+  <h4 class="py-3 mb-4"><span class="text-muted fw-light">Menu /</span>
+    <a type="button" href="#" onclick="volver()">Asignaciones</a>
+    <th:block th:text="' /Administrar Avances'"></th:block>
+    <input type="hidden" id="idCurso" th:value="${curso.id_curso}">
+    <input type="hidden" id="nombreCurso" th:value="${curso.nombre_curso}">
+  </h4>
+
+  <div id="tablaRegistro"></div>
+
+  <div class="modal fade" id="modalFormularioPersona" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" id="contenidoModalPersona"></div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalAsignaciones" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content" id="contenidoModalAsignaciones"></div>
+    </div>
+  </div>
+
+
+</div>
+<!-- / Content -->
+
+<script>
+
+  $(document).ready(function () {
+    cargarTabla();
+
+  });
+
+  function cargarTabla() {
+    $.ajax({
+      type: 'POST',
+      url: "/actividad/tablaRegistros",  // Ruta del metodo del controlador en Spring Boot
+      success: function (response) {
+        $("#tablaRegistro").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+      }
+    });
+  }
+  function volver() {
+    $.ajax({
+      url: "/cargar-datos",
+      method: "GET",
+      success: function () {
+        $.ajax({
+          type: 'GET',
+          url: "/asignacion/ventana",
+          success: function (response) {
+            $("#contenido").html(response);
+          }
+        });
+      },
+      error: function (xhr) {
+        if (xhr.status === 401) {
+          // Si la sesión ha expirado, muestra una alerta con SweetAlert2
+          Swal.fire({
+            title: 'Sesión expirada',
+            text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+            icon: 'warning',
+            allowOutsideClick: false,
+            confirmButtonText: 'Ir al login'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/form-login'; // Redirige a la página de login
+            }
+          });
+        }
+      }
+    });
+
+  }
+</script>

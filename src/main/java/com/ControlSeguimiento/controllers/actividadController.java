@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ControlSeguimiento.model.entity.Actividad;
 import com.ControlSeguimiento.model.entity.Asignacion;
+import com.ControlSeguimiento.model.entity.Persona;
 import com.ControlSeguimiento.model.entity.Proyecto;
 import com.ControlSeguimiento.model.entity.Usuario;
 import com.ControlSeguimiento.model.service.ActividadService;
 import com.ControlSeguimiento.model.service.AsignacionService;
+import com.ControlSeguimiento.model.service.EmailServiceImpl;
 import com.ControlSeguimiento.model.service.PersonaService;
 import com.ControlSeguimiento.model.service.PrioridadService;
 import com.ControlSeguimiento.model.service.ProyectoService;
@@ -53,6 +55,9 @@ public class actividadController {
 
     @Autowired
     private ProyectoService proyectoService;
+
+    @Autowired
+    private EmailServiceImpl emailService;
 
     // @ValidarUsuarioAutenticado
     @GetMapping("/ventana")
@@ -156,10 +161,11 @@ public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Vali
 
     @PostMapping("/GuardarAsignaciones")
 public ResponseEntity<String> GuardarAsignaciones(HttpServletRequest request, 
-        @RequestParam(value = "idActividad") Long idActividad,
+        @RequestParam(value = "idActividad") Long idActividad, HttpSession session,
         @RequestParam(value = "asignados", required = false) Long[] idPersonas) {
     
     try {
+        Usuario u = (Usuario)session.getAttribute("usuario");
         // Obtener la actividad por su ID
         Actividad actividad = actividadService.findById(idActividad);
         
@@ -180,12 +186,23 @@ public ResponseEntity<String> GuardarAsignaciones(HttpServletRequest request,
         // Crear nuevas asignaciones si hay personas seleccionadas
         if (idPersonas != null && idPersonas.length > 0) {
             for (Long idPersona : idPersonas) {
+                Persona persona = personaService.findById(idPersona);
+                String mensaje = """
+                        <h1>Asignación de Actividad</h1>
+                        <p>Estimado Señor/a %s Se le ha asignado una nueva actividad sobre %s.</p>
+                        <p>Por favor, ingrese al sistema para revisar la actividad asignada con mas detalle.</p>
+                """;
+                mensaje = String.format(mensaje, persona.getNombreCompleto(), actividad.getDescripcion());
+                
+				emailService.enviarEmail(persona.getCorreo(),
+						"Informaciones RRHH: " + persona.getNombreCompleto(), mensaje);
+
                 Asignacion asignacion = new Asignacion();
                 asignacion.setEstado("ACTIVO");
                 asignacion.setRegistro(new Date());
-                asignacion.setPersona(personaService.findById(idPersona));
+                asignacion.setPersona(persona);
                 asignacion.setActividad(actividad);
-                
+                asignacion.setRegistroIdUsuario(u.getIdUsuario());
                 // Guardar la asignación
                 asignacionService.save(asignacion);
             }

@@ -36,17 +36,6 @@
 
             <div id="tablaRegistro"></div>
 
-            <script>
-              function cargarTabla() {
-                $.ajax({
-                  type: 'POST',
-                  url: "/persona/tablaRegistros",  // Ruta del metodo del controlador en Spring Boot
-                  success: function (response) {
-                    $("#tablaRegistro").html(response);  // Actualiza el contenido del div con la respuesta del servidor
-                  }
-                });
-              }
-            </script>
           </div>
           <!-- / Content -->
 
@@ -82,6 +71,19 @@
 
   <div th:replace="~{layout/editPerfil :: editPerfil}"></div>
 
+  <script>
+    cargarTabla();
+    function cargarTabla() {
+      $.ajax({
+        type: 'POST',
+        url: "/rol/tablaRegistros",  // Ruta del metodo del controlador en Spring Boot
+        success: function (response) {
+          $("#tablaRegistro").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+        }
+      });
+    }
+
+  </script>
 </body>
 
 </html>

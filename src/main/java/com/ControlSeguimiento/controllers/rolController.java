@@ -33,7 +33,7 @@ public class rolController {
     //@ValidarUsuarioAutenticado
     @PostMapping("/tablaRegistros")
     public String tablaRegistros(Model model) {
-        model.addAttribute("personas", rolService.findAll());
-        return "persona/tablaRegistros";
+        model.addAttribute("roles", rolService.findAll());
+        return "rol/tablaRegistros";
     }
 }

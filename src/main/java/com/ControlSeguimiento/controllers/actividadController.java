@@ -60,7 +60,7 @@ public class actividadController {
     // @ValidarUsuarioAutenticado
     @PostMapping("/tablaRegistros")
     public String tablaRegistros(Model model) {
-        model.addAttribute("actividades", actividadService.findAll());
+        model.addAttribute("actividades", actividadService.listarActividades());
         return "actividad/tablaRegistros";
     }
 

@@ -14,6 +14,12 @@
         <div class="invalid-feedback">Porfavor Introduzca un nro de C.I.</div>
       </div>
       <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserFirstName">Cod. Funcionario</label>
+        <input type="text" th:field="${persona.codFuncionario}" class="form-control" placeholder="Introduzca su Cod. Funcionario" required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca un Cod. Funcionario</div>
+      </div>
+      <div class="col-12 col-md-4">
         <label class="form-label" for="modalEditUserLastName">Nombre</label>
         <input type="text" th:field="${persona.nombre}" class="form-control" placeholder="Introduzca Nombre" required />
         <div class="valid-feedback">Correcto!</div>

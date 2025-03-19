@@ -78,6 +78,7 @@ public class personaController {
             Persona person = personaService.findById(persona.getIdPersona());
         if (personaService.compararCi(person.getCi(), persona.getCi()) == null) {
             person.setCi(persona.getCi());
+            person.setCodFuncionario(persona.getCodFuncionario());
             person.setNombre(persona.getNombre());
             person.setPaterno(persona.getPaterno());
             person.setMaterno(persona.getMaterno());

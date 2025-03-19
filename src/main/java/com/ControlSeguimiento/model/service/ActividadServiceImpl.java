@@ -38,4 +38,9 @@ public class ActividadServiceImpl implements ActividadService{
         dao.save(actividad);
     }
 
+    @Override
+    public List<Actividad> listarActividades() {
+        return dao.listarActividades();
+    }
+
 }

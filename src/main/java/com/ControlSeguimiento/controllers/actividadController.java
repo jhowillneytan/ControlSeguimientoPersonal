@@ -47,7 +47,13 @@ public class actividadController {
 
     // @ValidarUsuarioAutenticado
     @GetMapping("/ventana")
-    public String inicio() {
+    public String inicio(HttpSession session) {
+
+        if (session.getAttribute("usuario") == null) {
+            // La sesión ha expirado o no existe
+            return "redirect:/form-login";
+        }
+
         return "actividad/ventana";
     }
 
@@ -157,7 +163,7 @@ public ResponseEntity<String> GuardarAsignaciones(HttpServletRequest request,
         if (idPersonas != null && idPersonas.length > 0) {
             for (Long idPersona : idPersonas) {
                 Asignacion asignacion = new Asignacion();
-                asignacion.setEstado("ACTIVO");
+                asignacion.setEstado("EN PROCESO");
                 asignacion.setRegistro(new Date());
                 asignacion.setPersona(personaService.findById(idPersona));
                 asignacion.setActividad(actividad);

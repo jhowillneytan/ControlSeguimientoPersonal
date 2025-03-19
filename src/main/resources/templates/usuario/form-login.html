@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>Planificacion</title>
+    <title>Sistema de Control</title>
 
     <meta name="description" content="" />
 
@@ -65,7 +65,8 @@
                         <!-- Logo -->
                         <div class="app-brand justify-content-center mb-4 mt-2">
                             <a href="/form-login" class="app-brand-link gap-2">
-                                <img src="../../../assets/img/logos/logoDPEI-removebg-preview.png" alt="" width="100">
+                                <!-- <img src="../../../assets/img/logos/logoDPEI-removebg-preview.png" alt="" width="100"> -->
+                                <img src="../../../assets/img/icons/iconoLogin.jfif" alt="" width="100">
                                 <!-- <span class="app-brand-logo demo">
                                     <svg width="32" height="22" viewBox="0 0 32 22" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -87,7 +88,7 @@
                             </a>
                         </div>
                         <!-- /Logo -->
-                        <p class="mb-4 text-center">Bienvenido al Sistema de Dirección de Planificación y Evaluación Institucional de la UAP.! 👋</p>
+                        <p class="mb-4 text-center">Sistema de Control y Seguimiento de Actividades! 👋</p>
 
                         <form id="formularioLogin" class="mb-3" action="/iniciar-sesion" method="post">
                             <div class="mb-3">
@@ -195,7 +196,7 @@
                                     timerInterval = setInterval(() => {
                                         timer.textContent = `${Swal.getTimerLeft()}`;
                                     }, 100);
-                                    window.location.href = '/Planificacion';
+                                    window.location.href = '/ControlSeguimiento';
                                 },
                                 willClose: () => {
                                     clearInterval(timerInterval);

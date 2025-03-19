@@ -14,25 +14,34 @@
           <th>Descripción</th>
           <th>Fecha Inicio</th>
           <th>Fecha Fin</th>
-          <th>Asignados</th>
+          <th>Responsables</th>
+          <th>Estado</th>
           <th>Fecha Registro</th>
           <th>Opciones</th>
         </tr>
       </thead>
       <tbody class="animate__animated animate__bounceInDown">
         <tr th:each="actividad, cont: ${actividades}">
-          <th th:text="${cont.count}"></th>
-          <th th:text="${actividad.descripcion}"></th>
-          <th th:text="${#dates.format(actividad.fechaInicio, 'dd/MM/yyyy')}"></th>
-          <th th:text="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"></th>
-          <th>
+          <td th:text="${cont.count}"></td>
+          <td th:text="${actividad.descripcion}"></td>
+          <td th:text="${#dates.format(actividad.fechaInicio, 'dd/MM/yyyy')}"></td>
+          <td th:text="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"></td>
+          <td>
             <ul class="list-group">
               <li class="list-group-item" th:each="asig: ${actividad.asignaciones}"
               th:text="${asig.persona.nombreCompleto}"></li>
             </ul>
-          </th>
-          <th th:text="${#dates.format(actividad.registro, 'dd/MM/yyyy hh:mm a')}"></th>
-          <th>
+          </td>
+          <td>
+            <span class="badge rounded-pill text-bg-primary" th:if="${actividad.estado == 'EN PROCESO'}"
+            th:text="${actividad.estado}"></span>
+            <span class="badge rounded-pill text-bg-warning" th:if="${actividad.estado == 'ATRASADO'}"
+            th:text="${actividad.estado}"></span>
+            <span class="badge rounded-pill text-bg-success" th:if="${actividad.estado == 'FINALIZADO'}"
+            th:text="${actividad.estado}"></span>
+          </td>
+          <td th:text="${#dates.format(actividad.registro, 'dd/MM/yyyy hh:mm a')}"></td>
+          <td>
             <button type="button" class="btn btn-sm btn-primary"
               th:onclick="cargarModalAsignaciones([[${actividad.idActividad}]])" data-bs-toggle="modal"
               data-bs-target="#modalAsignaciones">
@@ -46,7 +55,7 @@
             <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminar([[${actividad.idActividad}]])">
               <i class="fa-solid fa-trash"></i> Eliminar
             </button>
-          </th>
+          </td>
         </tr>
       </tbody>
     </table>

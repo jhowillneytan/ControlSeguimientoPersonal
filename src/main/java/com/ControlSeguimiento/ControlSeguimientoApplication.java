@@ -62,10 +62,10 @@ public class ControlSeguimientoApplication {
 			}
 
 			// Crear o actualizar la primera persona y su usuario
-			String[] cis = { "111", "222" };
-			String[] nombres = { "PRIMER USUARIO", "SEGUNDO USUARIO" };
-			String[] usuarios = { "admin1", "admin2" };
-			String[] password = { "123", "123" };
+			String[] cis = { "111"};
+			String[] nombres = { "PRIMER USUARIO"};
+			String[] usuarios = { "admin"};
+			String[] password = { "123"};
 			for (int i = 0; i < cis.length; i++) {
 				// Verificar si la persona ya existe
 				Persona persona = personaService.buscarPorCi(cis[i]);

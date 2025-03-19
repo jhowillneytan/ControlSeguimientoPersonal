@@ -33,32 +33,43 @@ public class indexController {
     
 
     @GetMapping("/")
-    public String getMethodName() {
+    public String getMethodName(HttpSession session) {
+
+        if (session.getAttribute("usuario") == null) {
+            // La sesión ha expirado o no existe
+            return "redirect:/form-login";
+        }
+
         return "redirect:/ControlSeguimiento";
     }
     
     //@ValidarUsuarioAutenticado
     @GetMapping("/ControlSeguimiento")
     @Transactional
-    public String inicio(HttpServletRequest request) {
+    public String inicio(HttpServletRequest request, HttpSession session) {
 
-        Usuario usuario = usuarioService.buscarPorNombreUser("admin1");
-        HttpSession sessionAdministrador = request.getSession(true);
-            String contraseñaDecrypt;
-            try {
-                contraseñaDecrypt = utilidadesService.decrypt(usuario.getPassword());
-                usuario.setPassword(contraseñaDecrypt);
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            sessionAdministrador.setAttribute("usuario", usuario);
-            sessionAdministrador.setAttribute("persona", personaService.findById(usuario.getPersona().getIdPersona()));
-            sessionAdministrador.setAttribute("roles", new ArrayList<Rol>(usuario.getRoles()));
-            System.out.println("USUARIO INICIADO");
+        // Usuario usuario = usuarioService.buscarPorNombreUser("admin1");
+        // HttpSession sessionAdministrador = request.getSession(true);
+        //     String contraseñaDecrypt;
+        //     try {
+        //         contraseñaDecrypt = utilidadesService.decrypt(usuario.getPassword());
+        //         usuario.setPassword(contraseñaDecrypt);
+        //     } catch (Exception e) {
+        //         // TODO Auto-generated catch block
+        //         e.printStackTrace();
+        //     }
+        //     sessionAdministrador.setAttribute("usuario", usuario);
+        //     sessionAdministrador.setAttribute("persona", personaService.findById(usuario.getPersona().getIdPersona()));
+        //     sessionAdministrador.setAttribute("roles", new ArrayList<Rol>(usuario.getRoles()));
+        //     System.out.println("USUARIO INICIADO");
 
         //Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        usuario = (Usuario) request.getSession().getAttribute("usuario");
+        if (session.getAttribute("usuario") == null) {
+            // La sesión ha expirado o no existe
+            return "redirect:/form-login";
+        }
+
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         logger.info("Usuario en sesión: {}", usuario.getPersona().getNombre());
         return "index";
         

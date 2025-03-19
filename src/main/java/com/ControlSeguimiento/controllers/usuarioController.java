@@ -22,6 +22,7 @@ import com.ControlSeguimiento.model.service.UsuarioService;
 import com.ControlSeguimiento.model.service.UtilidadesService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/usuario")
@@ -41,7 +42,13 @@ public class usuarioController {
 
     //@ValidarUsuarioAutenticado
     @GetMapping("/ventana")
-    public String inicio() {
+    public String inicio(HttpSession session) {
+
+        if (session.getAttribute("usuario") == null) {
+            // La sesión ha expirado o no existe
+            return "redirect:/form-login";
+        }
+
         return "usuario/ventana";
     }
 

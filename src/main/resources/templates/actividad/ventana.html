@@ -109,8 +109,62 @@
       cargarFormularioEditAlert(id, "/actividad/formulario", "#contenidoModalPersona", "#formularioPersona");
     }
 
-    function eliminar(nombre, id) {
-      eliminarRegistroAlert(nombre, id, "/actividad/eliminar", cargarTabla);
+    function eliminar(id) {
+      //eliminarRegistroAlert(nombre, id, "/actividad/eliminar", cargarTabla);
+      $.ajax({
+        url: "/cargar-datos",  // URL para verificar la sesión
+        method: "GET",
+        success: function () {
+            // Si la sesión es válida, procede con la eliminación
+            Swal.fire({
+                title: 'Eliminar Registro',
+                text: '¿Estás seguro de eliminar a este registro?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si el usuario confirma, realizar la llamada AJAX para eliminar
+                    $.ajax({
+                        url: "/actividad/eliminar/" + id,  // URL para eliminar el registro con el ID
+                        type: 'POST',
+                        success: function (response) {
+                            cargarTablaFuncion();  // Recargar la tabla (función pasada como parámetro)
+                            Swal.fire(
+                                'Eliminado!',
+                                response,
+                                'success'
+                            );
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire(
+                                'Error',
+                                'Hubo un problema al eliminar el registro. Por favor, inténtalo de nuevo.',
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        },
+        error: function (xhr) {
+            if (xhr.status === 401) {
+                // Si la sesión ha expirado, muestra una alerta con SweetAlert2
+                Swal.fire({
+                    title: 'Sesión expirada',
+                    text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+                    icon: 'warning',
+                    confirmButtonText: 'Ir al login'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/form-login';  // Redirige a la página de login
+                    }
+                });
+            }
+        }
+    });
     }
 
     function cargarModalAsignaciones(id) {

@@ -47,7 +47,10 @@ public class actividadController {
 
     // @ValidarUsuarioAutenticado
     @GetMapping("/ventana")
-    public String inicio(HttpSession session) {
+    public String inicio(HttpSession session, Model model) {
+
+        model.addAttribute("opcionSeccionActividades", "true");
+        model.addAttribute("opcionActividades", "true");
 
         if (session.getAttribute("usuario") == null) {
             // La sesión ha expirado o no existe

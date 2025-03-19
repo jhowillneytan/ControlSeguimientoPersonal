@@ -20,8 +20,9 @@ public class rolController {
 
     //@ValidarUsuarioAutenticado
     @GetMapping("/ventana")
-    public String inicio(HttpSession session) {
-
+    public String inicio(HttpSession session, Model model) {
+        model.addAttribute("opcionSeccionUsuarios", "true");
+        model.addAttribute("opcionRoles", "true");
         if (session.getAttribute("usuario") == null) {
             // La sesión ha expirado o no existe
             return "redirect:/form-login";

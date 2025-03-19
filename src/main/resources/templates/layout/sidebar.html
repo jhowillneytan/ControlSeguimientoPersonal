@@ -31,36 +31,36 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">INICIO</span>
         </li>
-        <li class="menu-item" th:if="${#lists.contains(session.roles.![nombre], 'SUPER USUARIO')}">
+        <li th:class="${opcionSeccionUsuarios == 'true'}? 'menu-item active open': 'menu-item'" th:if="${#lists.contains(session.roles.![nombre], 'SUPER USUARIO')}">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-users"></i>
                 <div>Administrar Usuarios</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item" >
+                <li th:class="${opcionRoles == 'true'}? 'menu-item active': 'menu-item'" >
                     <a class="menu-link" th:href="@{/rol/ventana}">
                         <div>Roles</div>
                     </a>
                 </li>
-                <li class="menu-item" >
+                <li th:class="${opcionPersona == 'true'}? 'menu-item active': 'menu-item'">
                     <a class="menu-link" th:href="@{/persona/ventana}">
                         <div>Personas</div>
                     </a>
                 </li>
-                <li class="menu-item" >
+                <li th:class="${opcionUsuarios == 'true'}? 'menu-item active': 'menu-item'">
                     <a class="menu-link" th:href="@{/usuario/ventana}">
                         <div>Usuarios</div>
                     </a>
                 </li>
             </ul>
         </li>
-        <li class="menu-item active open">
+        <li th:class="${opcionSeccionActividades == 'true'}? 'menu-item active open': 'menu-item'">
             <a href="#" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-wallet"></i>
                 <div>Adminitrar Actividades</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li th:class="${opcionActividades == 'true'}? 'menu-item active': 'menu-item'">
                     <a class="menu-link" th:href="@{/actividad/ventana}">
                         <div data-i18n="Actividades">Actividades</div>
                     </a>

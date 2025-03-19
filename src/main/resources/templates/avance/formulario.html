@@ -1,0 +1,112 @@
+<div class="modal-header">
+  <h4 class="modal-title" th:text="${edit}? 'Modificar Persona' : 'Registrar Persona'"></h4>
+  <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+</div>
+<form id="formularioPersona" method="post"
+  th:action="${edit}? @{/persona/ModificarPersona} : @{/persona/RegistrarPersona}" novalidate>
+  <input type="hidden" th:if="${edit != null}" th:field="${persona.idPersona}">
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserFirstName">C.I.</label>
+        <input type="text" th:field="${persona.ci}" class="form-control" placeholder="Introduzca C.I." required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca un nro de C.I.</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserFirstName">Cod. Funcionario</label>
+        <input type="text" th:field="${persona.codFuncionario}" class="form-control"
+          placeholder="Introduzca su Cod. Funcionario" required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca un Cod. Funcionario</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserLastName">Nombre</label>
+        <input type="text" th:field="${persona.nombre}" class="form-control" placeholder="Introduzca Nombre" required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca un nombre.</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserFirstName">Apellido Paterno</label>
+        <input type="text" th:field="${persona.paterno}" class="form-control" placeholder="Introduzca Apellido Paterno"
+          required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca un apellido paterno.</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserFirstName">Apellido Materno</label>
+        <input type="text" th:field="${persona.materno}" class="form-control" placeholder="Introduzca Apellido Materno"
+          required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca un apellido materno.</div>
+      </div>
+      <div class="col-12 col-md-4">
+        <label class="form-label" for="modalEditUserFirstName">Correo/Email</label>
+        <input type="text" th:field="${persona.correo}" class="form-control" placeholder="Introduzca Apellido Materno"
+          required />
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca el email.</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="row">
+      <div class="col-12">
+        <input type="submit" class="btn btn-success" th:value="${edit}? 'Guardar Cambios': 'Guardar Registro'">
+        <a type="submit" class="btn btn-secondary" style="color: white;" data-bs-dismiss="modal">Cancelar</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  $(document).ready(function () {
+
+    $('#formularioPersona').submit(function (event) {
+      event.preventDefault();
+      if (this.checkValidity() === false) {
+        $(this).addClass('was-validated');
+        return;
+      }
+      var form = $(this)[0];
+      var formData = new FormData(form);
+
+      $.ajax({
+        type: 'POST',
+        url: $(this).attr('action'),
+        data: formData,
+        contentType: false,  // No establecer el tipo de contenido aquí
+        processData: false,  // No procesar los datos
+        success: function (response) {
+
+          if (response === 'Se realizó el registro correctamente') {
+            cargarTabla();
+            cargarFormulario();
+            Swal.fire(
+              'Registrado!',
+              response + '.',
+              'success'
+            );
+          } else {
+            Swal.fire(
+              'Imposible Registrar!',
+              response + '.',
+              'error'
+            );
+          }
+
+        },
+        error: function (xhr, status, error) {
+          Swal.fire(
+            'Imposible Registrar!',
+            'Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error,
+            'error'
+          );
+          console.error(error);
+          // Manejo de errores
+        }
+      });
+    });
+
+  });
+</script>

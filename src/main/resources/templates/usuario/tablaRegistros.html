@@ -18,7 +18,7 @@
             <th>Opciones</th>
           </tr>
         </thead>
-        <tbody class="animate__animated animate__bounceInDown">
+        <tbody class="animate__animated animate__fadeIn">
           <tr th:each="usuario, cont: ${usuarios}">
             <td th:text="${cont.count}"></td>
             <td th:text="${usuario.persona.nombre}+' '+${usuario.persona.paterno}+' '+ ${usuario.persona.materno}"></td>

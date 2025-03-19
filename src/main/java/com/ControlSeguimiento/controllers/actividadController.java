@@ -19,10 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ControlSeguimiento.model.entity.Actividad;
 import com.ControlSeguimiento.model.entity.Asignacion;
+import com.ControlSeguimiento.model.entity.Proyecto;
 import com.ControlSeguimiento.model.entity.Usuario;
 import com.ControlSeguimiento.model.service.ActividadService;
 import com.ControlSeguimiento.model.service.AsignacionService;
 import com.ControlSeguimiento.model.service.PersonaService;
+import com.ControlSeguimiento.model.service.PrioridadService;
+import com.ControlSeguimiento.model.service.ProyectoService;
 import com.ControlSeguimiento.model.service.UsuarioService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +47,12 @@ public class actividadController {
 
         @Autowired
     private PersonaService personaService;
+
+    @Autowired
+    private PrioridadService prioridadService;
+
+    @Autowired
+    private ProyectoService proyectoService;
 
     // @ValidarUsuarioAutenticado
     @GetMapping("/ventana")
@@ -71,6 +80,8 @@ public class actividadController {
     @PostMapping("/formulario")
     public String formulario1(Model model) {
         model.addAttribute("actividad", new Actividad());
+        model.addAttribute("prioridades", prioridadService.findAll());
+        model.addAttribute("proyectos", proyectoService.listar());
         return "actividad/formulario";
     }
 
@@ -78,6 +89,8 @@ public class actividadController {
     @PostMapping("/formulario/{id}")
     public String formulario2(Model model, @PathVariable("id") Long idPerson) {
         model.addAttribute("actividad", actividadService.findById(idPerson));
+        model.addAttribute("prioridades", prioridadService.findAll());
+        model.addAttribute("proyectos", proyectoService.listar());
         model.addAttribute("edit", "true");
         return "actividad/formulario";
     }
@@ -95,8 +108,8 @@ public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Vali
 @RequestParam(value = "fechaInicio")String fechaInicio, @RequestParam(value = "fechaFin")String fechaFin) {
     try {
         // Establecer estado de la actividad
-        actividad.setEstado("ACTIVO");
-        
+        actividad.setEstado("EN PROCESO");
+        actividad.setProgreso(0.0);
         // Establecer las fechas en la entidad de actividad
         actividad.setFechaInicio(convertirFecha(fechaInicio)); // Establecer la fecha de inicio convertida
         actividad.setFechaFin(convertirFecha(fechaFin)); // Establecer la fecha de fin convertida
@@ -135,6 +148,9 @@ public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Vali
             e.printStackTrace();
         } // Establecer la fecha de inicio convertida
         actividad.setDescripcion(a.getDescripcion());
+        actividad.setPrioridad(a.getPrioridad());
+        actividad.setProgreso(a.getProgreso());
+        actividad.setProyecto(a.getProyecto());
         actividadService.save(actividad);
         return ResponseEntity.ok("Se realizó el registro correctamente");
     }
@@ -166,7 +182,7 @@ public ResponseEntity<String> GuardarAsignaciones(HttpServletRequest request,
         if (idPersonas != null && idPersonas.length > 0) {
             for (Long idPersona : idPersonas) {
                 Asignacion asignacion = new Asignacion();
-                asignacion.setEstado("EN PROCESO");
+                asignacion.setEstado("ACTIVO");
                 asignacion.setRegistro(new Date());
                 asignacion.setPersona(personaService.findById(idPersona));
                 asignacion.setActividad(actividad);

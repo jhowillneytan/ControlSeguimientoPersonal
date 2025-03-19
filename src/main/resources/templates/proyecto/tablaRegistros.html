@@ -1,0 +1,96 @@
+<div class="card ">
+  <div class="card-header d-flex justify-content-lg-between">
+    <h5>Registros Proyectos</h5>
+    <button type="button" class="btn btn-primary" onclick="cargarFormulario()" data-bs-toggle="modal"
+      data-bs-target="#modalFormularioProyecto">
+      <i class="fa-solid fa-plus"></i> Agregar Proyecto
+    </button>
+  </div>
+  <div class="card-datatable table-responsive pt-0">
+    <table class="datatables-basic table table-hover" id="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Estado</th>
+          <th>Progreso</th>
+          <th>Fecha Registro</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody class="animate__animated animate__fadeIn">
+        <tr th:each="proyecto, cont: ${proyectos}">
+          <td th:text="${cont.count}"></td>
+          <td th:text="${proyecto.nombre}"></td>
+          <td th:text="${proyecto.descripcion}"></td>
+          <td th:text="${#dates.format(proyecto.fechaInicio, 'dd/MM/yyyy')}"></td>
+          <td th:text="${#dates.format(proyecto.fechaFin, 'dd/MM/yyyy')}"></td>
+          <td>
+            <span class="badge rounded-pill text-bg-info" th:if="${proyecto.estado == 'ACTIVO'}"
+              th:text="${proyecto.estado}"></span>
+            <span class="badge rounded-pill text-bg-primary" th:if="${proyecto.estado == 'EN PROCESO'}"
+              th:text="${proyecto.estado}"></span>
+            <span class="badge rounded-pill text-bg-warning" th:if="${proyecto.estado == 'ATRASADO'}"
+              th:text="${proyecto.estado}"></span>
+            <span class="badge rounded-pill text-bg-success" th:if="${proyecto.estado == 'FINALIZADO'}"
+              th:text="${proyecto.estado}"></span>
+          </td>
+          <td>
+            <div class="progress" style="height: 25px;">
+              <div class="progress-bar" role="progressbar" 
+                   th:style="'width: ' + ${proyecto.progreso} + '%'" 
+                   th:attr="aria-valuenow=${proyecto.progreso}" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100"
+                   th:text="${#numbers.formatDecimal(proyecto.progreso, 1, 1)} + ' %'">
+              </div>
+            </div>
+          </td>
+          <td th:text="${#dates.format(proyecto.registro, 'dd/MM/yyyy hh:mm a')}"></td>
+          <td>
+            <button type="button" class="btn btn-sm btn-primary"
+              th:onclick="cargarFormularioEdit([[${proyecto.idProyecto}]])" data-bs-toggle="modal"
+              data-bs-target="#modalFormularioProyecto">
+              <i class="fa-solid fa-pen-to-square"></i> Editar
+            </button>
+            <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminar([[${proyecto.idProyecto}]])">
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+  $('#data-table').DataTable({
+    language: {
+      "sProcessing": "Procesando...",
+      "sLengthMenu": "Mostrar _MENU_ registros",
+      "sZeroRecords": "No se encontraron resultados",
+      "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix": "",
+      "sSearch": "Buscar:",
+      "sUrl": "",
+      "sInfoThousands": ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst": "Primero",
+        "sLast": "Último",
+        "sNext": "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    }
+  });
+</script>

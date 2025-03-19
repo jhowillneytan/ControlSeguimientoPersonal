@@ -1,16 +1,25 @@
 <div class="modal-header">
-  <h4 class="modal-title" th:text="${edit}? 'Modificar Actividad' : 'Registrar Actividad'"></h4>
+  <h4 class="modal-title" th:text="${edit}? 'Modificar Proyecto' : 'Registrar Proyecto'"></h4>
   <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
 </div>
-<form id="formularioRegistro" method="post" th:action="${edit}? @{/actividad/Modificar} : @{/actividad/Registrar}"
+<form id="formularioRegistro" method="post" th:action="${edit}? @{/proyecto/ModificarProyecto} : @{/proyecto/RegistrarProyecto}"
   novalidate>
-  <input type="hidden" th:if="${edit != null}" th:field="${actividad.idActividad}">
+  <input type="hidden" th:if="${edit != null}" th:field="${proyecto.idProyecto}">
   <div class="modal-body">
     <div class="row">
       <div class="col-12 col-md-12">
+        <label class="form-label" for="modalEditUserFirstName">Nombre</label>
+        <textarea class="form-control" th:field="${proyecto.nombre}"
+          placeholder="Introduzca Introduzca el nombre del proyecto" required></textarea>
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca el nombre del proyecto.</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-12">
         <label class="form-label" for="modalEditUserFirstName">Descripción</label>
-        <textarea class="form-control" th:field="${actividad.descripcion}"
-          placeholder="Introduzca Introduzca la Descripción de la Actividad" required></textarea>
+        <textarea class="form-control" th:field="${proyecto.descripcion}"
+          placeholder="Introduzca Introduzca la Descripción del proyecto" required></textarea>
         <div class="valid-feedback">Correcto!</div>
         <div class="invalid-feedback">Porfavor Introduzca la Descripción.</div>
       </div>
@@ -18,41 +27,17 @@
     <div class="row">
       <div class="col-12 col-md-6">
         <label class="form-label" for="modalEditUserFirstName">Fecha Inicio</label>
-        <input type="text" name="fechaInicio" th:value="${#dates.format(actividad.fechaInicio, 'dd/MM/yyyy')}"
+        <input type="text" name="fechaInicio" th:value="${#dates.format(proyecto.fechaInicio, 'dd/MM/yyyy')}"
           class="form-control datepickerD" placeholder="__/__/___" required />
         <div class="valid-feedback">Correcto!</div>
         <div class="invalid-feedback">Porfavor Introduzca una fecha de inicio.</div>
       </div>
       <div class="col-12 col-md-6">
         <label class="form-label" for="modalEditUserFirstName">Fecha Final</label>
-        <input type="text" name="fechaFin" th:value="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"
+        <input type="text" name="fechaFin" th:value="${#dates.format(proyecto.fechaFin, 'dd/MM/yyyy')}"
           class="form-control datepickerD" placeholder="__/__/____" required />
         <div class="valid-feedback">Correcto!</div>
         <div class="invalid-feedback">Porfavor Introduzca una fecha final.</div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <label for="select2Primary" class="form-label">Prioridad</label>
-        <div class="select2-primary">
-          <select id="select2Primary" class="form-select" th:field="${actividad.prioridad}">
-            <option th:each="prioridad: ${prioridades}" th:value="${prioridad.idPrioridad}" th:text="${prioridad.nivel}"
-              th:selected="${prioridad == actividad.prioridad}"></option>
-          </select>
-          <div class="valid-feedback">Correcto!</div>
-          <div class="invalid-feedback">Debe seleccionar una prioridad.</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-6">
-        <label for="select2Primary" class="form-label">Proyecto</label>
-        <div class="select2-primary">
-          <select id="select2Primary" class="select2 form-select" th:field="${actividad.proyecto}">
-            <option th:each="proyecto: ${proyectos}" th:value="${proyecto.idProyecto}" th:text="${proyecto.nombre}"
-              th:selected="${proyecto == actividad.proyecto}"></option>
-          </select>
-          <div class="valid-feedback">Correcto!</div>
-          <div class="invalid-feedback">Debe seleccionar un proyecto.</div>
-        </div>
       </div>
     </div>
   </div>
@@ -68,6 +53,10 @@
 
 <script>
   $(document).ready(function () {
+
+    $('.select2').select2({
+      dropdownParent: $('#formularioRegistro')  // Especificar el parent para el dropdown
+    })
 
     // Usar event delegation con jQuery moderno
     $(document).on('focusin', '.datepickerD', function () {
@@ -127,10 +116,6 @@
         }
       });
     });
-
-    $('.select2').select2({
-      dropdownParent: $('#formularioRegistro')  // Especificar el parent para el dropdown
-    })
 
   });
 </script>

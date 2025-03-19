@@ -3,10 +3,12 @@ package com.ControlSeguimiento.model.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.ControlSeguimiento.model.dao.PrioridadDao;
 import com.ControlSeguimiento.model.entity.Prioridad;
 
+@Service
 public class PrioridadServiceImpl implements PrioridadService{
     
     @Autowired

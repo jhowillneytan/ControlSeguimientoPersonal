@@ -60,9 +60,19 @@
                 <div>Adminitrar Actividades</div>
             </a>
             <ul class="menu-sub">
-                <li th:class="${opcionActividades == 'true'}? 'menu-item active': 'menu-item'">
+                <li th:class="${opcionActividades == 'true'}? 'menu-item active': 'menu-item'" th:if="${#lists.contains(session.roles.![nombre], 'ADMINISTRADOR')}">
                     <a class="menu-link" th:href="@{/actividad/ventana}">
                         <div data-i18n="Actividades">Actividades</div>
+                    </a>
+                </li>
+                <li th:class="${opcionProyecto == 'true'}? 'menu-item active': 'menu-item'" th:if="${#lists.contains(session.roles.![nombre], 'ADMINISTRADOR')}">
+                    <a class="menu-link" th:href="@{/proyecto/ventana}">
+                        <div data-i18n="Proyectos">Proyectos</div>
+                    </a>
+                </li>
+                <li th:class="${opcionActividades == 'true'}? 'menu-item active': 'menu-item'" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}">
+                    <a class="menu-link" th:href="@{/actividad/ventana}">
+                        <div data-i18n="Asignaciones">Asignaciones</div>
                     </a>
                 </li>
                 <!-- <li class="menu-item">

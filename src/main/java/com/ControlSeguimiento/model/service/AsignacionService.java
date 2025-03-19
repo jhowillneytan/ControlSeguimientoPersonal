@@ -7,4 +7,5 @@ import com.ControlSeguimiento.model.entity.Asignacion;
 
 public interface AsignacionService extends GenericoService <Asignacion, Long>{
     List<Asignacion> findByActividad(Actividad actividad);
+    List<Asignacion> listarAsignacionesPorIdPersona(Long idPersona);
 }

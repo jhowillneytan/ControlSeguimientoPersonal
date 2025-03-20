@@ -28,9 +28,17 @@ public class Avance extends AuditoriaConfig {
 
     private String descripcion;
 
+    private String observacion;
+
+    private double valorProgreso;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_actividad")
     private Actividad actividad;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_asignacion")
+    private Asignacion asignacion;
 
     @OneToMany(mappedBy = "avance", fetch = FetchType.EAGER)
     private List<ArchivoAdjunto> archivoAdjuntos;

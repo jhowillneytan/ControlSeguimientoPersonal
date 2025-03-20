@@ -34,6 +34,7 @@ public class Actividad extends AuditoriaConfig {
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date fechaFin;
 
+    private String titulo;
     private String descripcion;
     private double progreso;
 

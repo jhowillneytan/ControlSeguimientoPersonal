@@ -1,16 +1,16 @@
 <div class="container-xxl flex-grow-1 container-p-y" id="contenido">
 
   <h4 class="py-3 mb-4"><span class="text-muted fw-light">Menu /</span>
-    <a type="button" href="#" onclick="volver()">Asignaciones</a>
+    <a type="button" th:href="@{/avance/ventana}">Asignaciones</a>
     <th:block th:text="' /Administrar Avances'"></th:block>
     <input type="hidden" id="idAsignacion" th:value="${asignacion.idAsignacion}">
   </h4>
 
   <div id="tablaRegistro"></div>
 
-  <div class="modal fade" id="modalFormularioPersona" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="modalFormularioAvance" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content" id="contenidoModalPersona"></div>
+      <div class="modal-content" id="contenidoModalAvance"></div>
     </div>
   </div>
 
@@ -34,42 +34,46 @@
   function cargarTabla() {
     $.ajax({
       type: 'POST',
-      url: "/actividad/tablaRegistros",  // Ruta del metodo del controlador en Spring Boot
+      url: "/avance/tablaRegistros/"+$('#idAsignacion').val(),  // Ruta del metodo del controlador en Spring Boot
       success: function (response) {
         $("#tablaRegistro").html(response);  // Actualiza el contenido del div con la respuesta del servidor
       }
     });
   }
-  function volver() {
-    $.ajax({
-      url: "/cargar-datos",
-      method: "GET",
-      success: function () {
-        $.ajax({
-          type: 'GET',
-          url: "/asignacion/ventana",
-          success: function (response) {
-            $("#contenido").html(response);
-          }
-        });
-      },
-      error: function (xhr) {
-        if (xhr.status === 401) {
-          // Si la sesión ha expirado, muestra una alerta con SweetAlert2
-          Swal.fire({
-            title: 'Sesión expirada',
-            text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
-            icon: 'warning',
-            allowOutsideClick: false,
-            confirmButtonText: 'Ir al login'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.href = '/form-login'; // Redirige a la página de login
-            }
-          });
-        }
-      }
-    });
 
-  }
+  function cargarFormulario() {
+      cargarFormularioAlert("/avance/formulario", "#contenidoModalAvance", "#formularioAvance");
+    }
+  // function volver() {
+  //   $.ajax({
+  //     url: "/cargar-datos",
+  //     method: "GET",
+  //     success: function () {
+  //       $.ajax({
+  //         type: 'GET',
+  //         url: "/avance/ventana",
+  //         success: function (response) {
+  //           $("#contenido").html(response);
+  //         }
+  //       });
+  //     },
+  //     error: function (xhr) {
+  //       if (xhr.status === 401) {
+  //         // Si la sesión ha expirado, muestra una alerta con SweetAlert2
+  //         Swal.fire({
+  //           title: 'Sesión expirada',
+  //           text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+  //           icon: 'warning',
+  //           allowOutsideClick: false,
+  //           confirmButtonText: 'Ir al login'
+  //         }).then((result) => {
+  //           if (result.isConfirmed) {
+  //             window.location.href = '/form-login'; // Redirige a la página de login
+  //           }
+  //         });
+  //       }
+  //     }
+  //   });
+
+  // }
 </script>

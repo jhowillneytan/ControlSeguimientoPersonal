@@ -152,6 +152,7 @@ public ResponseEntity<String> RegistrarPersona(HttpServletRequest request, @Vali
             // TODO Auto-generated catch block
             e.printStackTrace();
         } // Establecer la fecha de inicio convertida
+        actividad.setTitulo(a.getTitulo());
         actividad.setDescripcion(a.getDescripcion());
         actividad.setPrioridad(a.getPrioridad());
         actividad.setProgreso(a.getProgreso());

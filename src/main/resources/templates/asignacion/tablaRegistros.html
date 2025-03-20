@@ -59,7 +59,10 @@
           </td>
           <td th:text="${#dates.format(asignacion.actividad.registro, 'dd/MM/yyyy hh:mm a')}"></td>
           <td>
-            
+            <button type="button" class="btn btn-sm btn-primary"
+              th:onclick="cargarAvances([[${asignacion.idAsignacion}]])">
+              <i class="fa fa-plus"></i> Administrar Avances
+            </button>
           </td>
         </tr>
       </tbody>
@@ -95,4 +98,6 @@
     },
     "stateSave": true
   });
+
+
 </script>

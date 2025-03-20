@@ -101,6 +101,16 @@
       });
     }
 
+    function cargarAvances(id) {
+      $.ajax({
+        type: 'POST',
+        url: "/avance/subVentana/"+id,  // Ruta del metodo del controlador en Spring Boot
+        success: function (response) {
+          $("#contenido").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+        }
+      });
+    }
+
     function cargarFormulario() {
       cargarFormularioAlert("/asignacion/formulario", "#contenidoModalPersona", "#formularioPersona");
     }

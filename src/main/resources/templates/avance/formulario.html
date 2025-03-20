@@ -1,51 +1,30 @@
 <div class="modal-header">
-  <h4 class="modal-title" th:text="${edit}? 'Modificar Persona' : 'Registrar Persona'"></h4>
+  <h4 class="modal-title" th:text="${edit}? 'Modificar Avance' : 'Registrar Avance'"></h4>
   <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
 </div>
-<form id="formularioPersona" method="post"
-  th:action="${edit}? @{/persona/ModificarPersona} : @{/persona/RegistrarPersona}" novalidate>
-  <input type="hidden" th:if="${edit != null}" th:field="${persona.idPersona}">
+<form id="formularioAvance" method="post"
+  th:action="${edit}? @{/Avance/ModificarAvance} : @{/Avance/RegistrarAvance}" novalidate>
+  <input type="hidden" th:if="${edit != null}" th:field="${avance.idAvance}">
   <div class="modal-body">
     <div class="row">
-      <div class="col-12 col-md-4">
-        <label class="form-label" for="modalEditUserFirstName">C.I.</label>
-        <input type="text" th:field="${persona.ci}" class="form-control" placeholder="Introduzca C.I." required />
+      <div class="col-12 col-md-6">
+        <label class="form-label" for="modalEditUserFirstName">Observación.</label>
+        <textarea class="form-control" th:field="${avance.observacion}"
+          placeholder="Introduzca Introduzca su observación" required></textarea>
         <div class="valid-feedback">Correcto!</div>
-        <div class="invalid-feedback">Porfavor Introduzca un nro de C.I.</div>
+        <div class="invalid-feedback">Porfavor Introduzca una observación</div>
       </div>
-      <div class="col-12 col-md-4">
-        <label class="form-label" for="modalEditUserFirstName">Cod. Funcionario</label>
-        <input type="text" th:field="${persona.codFuncionario}" class="form-control"
-          placeholder="Introduzca su Cod. Funcionario" required />
+      <div class="col-12 col-md-6">
+        <label class="form-label" for="modalEditUserFirstName">Valor de % del Avance</label>
+        <input type="text" th:field="${avance.valorProgreso}" class="form-control"
+          placeholder="Introduzca el valor de % del Avance" required />
         <div class="valid-feedback">Correcto!</div>
-        <div class="invalid-feedback">Porfavor Introduzca un Cod. Funcionario</div>
+        <div class="invalid-feedback">Porfavor Introduzca el valor de % del Avance</div>
       </div>
-      <div class="col-12 col-md-4">
-        <label class="form-label" for="modalEditUserLastName">Nombre</label>
-        <input type="text" th:field="${persona.nombre}" class="form-control" placeholder="Introduzca Nombre" required />
-        <div class="valid-feedback">Correcto!</div>
-        <div class="invalid-feedback">Porfavor Introduzca un nombre.</div>
-      </div>
-      <div class="col-12 col-md-4">
-        <label class="form-label" for="modalEditUserFirstName">Apellido Paterno</label>
-        <input type="text" th:field="${persona.paterno}" class="form-control" placeholder="Introduzca Apellido Paterno"
-          required />
-        <div class="valid-feedback">Correcto!</div>
-        <div class="invalid-feedback">Porfavor Introduzca un apellido paterno.</div>
-      </div>
-      <div class="col-12 col-md-4">
-        <label class="form-label" for="modalEditUserFirstName">Apellido Materno</label>
-        <input type="text" th:field="${persona.materno}" class="form-control" placeholder="Introduzca Apellido Materno"
-          required />
-        <div class="valid-feedback">Correcto!</div>
-        <div class="invalid-feedback">Porfavor Introduzca un apellido materno.</div>
-      </div>
-      <div class="col-12 col-md-4">
-        <label class="form-label" for="modalEditUserFirstName">Correo/Email</label>
-        <input type="text" th:field="${persona.correo}" class="form-control" placeholder="Introduzca Apellido Materno"
-          required />
-        <div class="valid-feedback">Correcto!</div>
-        <div class="invalid-feedback">Porfavor Introduzca el email.</div>
+      <div class="row mb-3 col-12 col-md-12">
+        <label for="">Medios de Verifiación</label>
+        <input type="file" class="filepond" name="filepond" multiple data-allow-reorder="true" data-max-file-size="100MB"
+          data-max-files="5" accept="image/*, application/pdf">
       </div>
     </div>
   </div>
@@ -61,52 +40,102 @@
 
 <script>
   $(document).ready(function () {
+    const fileInput = document.querySelector('.filepond');
 
-    $('#formularioPersona').submit(function (event) {
-      event.preventDefault();
-      if (this.checkValidity() === false) {
-        $(this).addClass('was-validated');
-        return;
-      }
-      var form = $(this)[0];
-      var formData = new FormData(form);
+    // Registrar los plugins que usarás
+    FilePond.registerPlugin(
+      FilePondPluginImagePreview,
+      FilePondPluginImageExifOrientation,
+      FilePondPluginFileValidateSize,
+      FilePondPluginImageEdit
+    );
 
-      $.ajax({
-        type: 'POST',
-        url: $(this).attr('action'),
-        data: formData,
-        contentType: false,  // No establecer el tipo de contenido aquí
-        processData: false,  // No procesar los datos
-        success: function (response) {
+    if (fileInput._pond) {
+      // Si ya está creado, destruir la instancia anterior
+      fileInput._pond.destroy();
+      console.log("FilePond destruido.");
+    }
 
-          if (response === 'Se realizó el registro correctamente') {
-            cargarTabla();
-            cargarFormulario();
-            Swal.fire(
-              'Registrado!',
-              response + '.',
-              'success'
-            );
-          } else {
-            Swal.fire(
-              'Imposible Registrar!',
-              response + '.',
-              'error'
-            );
-          }
+    // Crear una nueva instancia de FilePond
+    const pond = FilePond.create(fileInput, {
+      labelIdle: 'Arrastra y suelta tus archivos o <span class="filepond--label-action">haz clic aquí</span> para seleccionarlos',
+      acceptedFileTypes: ['image/*', 'application/pdf'],  // Solo imágenes y PDFs
+      allowFileTypeValidation: true,  // Validar tipos de archivos
+      maxFileSize: '100MB',  // Límite de tamaño de archivo
+      maxFiles: 5,  // Número máximo de archivos
+      checkValidity: true,  // Validar los archivos antes de enviar el formulario
+    });
 
-        },
-        error: function (xhr, status, error) {
-          Swal.fire(
-            'Imposible Registrar!',
-            'Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error,
-            'error'
-          );
-          console.error(error);
-          // Manejo de errores
+    // Función que elimina archivos no válidos después de que se agregan a FilePond
+    pond.on('updatefiles', function (files) {
+      files.forEach(function (file) {
+        const fileType = file.fileType;
+
+        // Si el archivo no es imagen ni PDF, eliminarlo
+        if (!fileType.match(/^image\//) && fileType !== 'application/pdf') {
+          pond.removeFile(file.id);  // Eliminar archivo no válido
+          //console.log('Archivo eliminado (no válido):', file.file.name);
+          const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.onmouseenter = Swal.stopTimer;
+              toast.onmouseleave = Swal.resumeTimer;
+            }
+          });
+          Toast.fire({
+            icon: "info",
+            title: "Solo de Admiten archivos de tipo PDF y de Imagen"
+          });
         }
       });
     });
 
+    // Manejar el envío del formulario con jQuery
+    $('#formularioAvances').on('submit', function (e) {
+      e.preventDefault(); // Evitar el envío tradicional del formulario
+
+      if (this.checkValidity() === false) {
+        $(this).addClass('was-validated');
+        return;
+      }
+
+      const formData = new FormData(this); // Crear un objeto FormData a partir del formulario
+
+      const files = pond.getFiles();  // Obtener todos los archivos seleccionados en FilePond
+      // Variable de validación
+
+      // Recorrer los archivos y validar que todos sean imágenes o PDFs
+      files.forEach(function (file) {
+        // Agregar cada archivo a FormData
+        formData.append('filepond', file.file); // 'filepond' es el nombre del campo de archivo
+      });
+
+      // Enviar los datos con jQuery y AJAX
+      $.ajax({
+        url: '/Avance/RegistrarAvance',  // URL de tu controlador en Spring
+        type: 'POST',
+        data: formData,
+        processData: false,  // Importante para que jQuery no procese el FormData
+        contentType: false,  // No especificar el tipo de contenido, ya que lo maneja FormData
+        success: function (response) {
+          Swal.fire(
+            'Registrado!',
+            response,
+            'success'
+          );
+          cargarFormulario();
+          cargarTabla();
+        },
+        error: function (xhr, status, error) {
+          console.error('Error:', error);
+          alert('Hubo un error al enviar el formulario.');
+        }
+      });
+    });
   });
+
 </script>

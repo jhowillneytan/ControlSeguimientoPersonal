@@ -109,7 +109,13 @@ public class loginController {
 
     //@ValidarUsuarioAutenticado
     @RequestMapping("/cerrar_sesion")
-    public String cerrarSesion(HttpServletRequest request, RedirectAttributes flash) {
+    public String cerrarSesion(HttpServletRequest request, RedirectAttributes flash, HttpSession session) {
+
+        if (session.getAttribute("usuario") == null) {
+            // La sesión ha expirado o no existe
+            return "redirect:/form-login";
+        }
+
         Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario");
         HttpSession sessionAdministrador = request.getSession();
         if (sessionAdministrador != null) {

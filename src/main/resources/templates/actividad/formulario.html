@@ -8,6 +8,15 @@
   <div class="modal-body">
     <div class="row">
       <div class="col-12 col-md-12">
+        <label class="form-label" for="modalEditUserFirstName">Título</label>
+        <textarea class="form-control" th:field="${actividad.titulo}"
+          placeholder="Introduzca Introduzca el Título de la Actividad" required></textarea>
+        <div class="valid-feedback">Correcto!</div>
+        <div class="invalid-feedback">Porfavor Introduzca el Título.</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-12">
         <label class="form-label" for="modalEditUserFirstName">Descripción</label>
         <textarea class="form-control" th:field="${actividad.descripcion}"
           placeholder="Introduzca Introduzca la Descripción de la Actividad" required></textarea>
@@ -59,7 +68,16 @@
   <div class="modal-footer">
     <div class="row">
       <div class="col-12">
-        <input type="submit" class="btn btn-success" th:value="${edit}? 'Guardar Cambios': 'Guardar Registro'">
+        <!-- <input type="submit" class="btn btn-success" th:value="${edit}? 'Guardar Cambios': 'Guardar Registro'"> -->
+        <button type="submit" id="btnGuardar" class="btn btn-success">
+          <span th:text="${edit}? 'Guardar Cambios': 'Guardar Registro'"></span>
+        </button>
+        
+        <!-- Botón con spinner (oculto inicialmente) -->
+        <button id="btnSpinner" class="btn btn-primary d-none" type="button" disabled>
+          <span class="spinner-grow spinner-grow-sm" aria-hidden="true"></span>
+          <span role="status">Guardando...</span>
+        </button>
         <a type="submit" class="btn btn-secondary" style="color: white;" data-bs-dismiss="modal">Cancelar</a>
       </div>
     </div>
@@ -84,8 +102,14 @@
 
     $('#formularioRegistro').submit(function (event) {
       event.preventDefault();
+
+      $('#btnGuardar').addClass('d-none');
+      $('#btnSpinner').removeClass('d-none');
+
       if (this.checkValidity() === false) {
         $(this).addClass('was-validated');
+        $('#btnSpinner').addClass('d-none');
+        $('#btnGuardar').removeClass('d-none');
         return;
       }
       var form = $(this)[0];
@@ -107,7 +131,10 @@
               response + '.',
               'success'
             );
+            $('.modal').modal('hide');
           } else {
+            $('#btnSpinner').addClass('d-none');
+        $('#btnGuardar').removeClass('d-none');
             Swal.fire(
               'Imposible Registrar!',
               response + '.',
@@ -117,6 +144,8 @@
 
         },
         error: function (xhr, status, error) {
+          $('#btnSpinner').addClass('d-none');
+        $('#btnGuardar').removeClass('d-none');
           Swal.fire(
             'Imposible Registrar!',
             'Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error,

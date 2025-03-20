@@ -1,30 +1,42 @@
 <div class="card ">
   <div class="card-header d-flex justify-content-lg-between">
     <h5>Registros de Actividades Asignadas</h5>
-    <button type="button" class="btn btn-primary" onclick="cargarFormulario()" data-bs-toggle="modal"
+    <button type="button" class="btn btn-primary" onclick="cargarFormularioAvance()" data-bs-toggle="modal"
       data-bs-target="#modalFormularioAvance">
       <i class="fa-solid fa-plus"></i> Agregar Avance
     </button>
   </div>
   <div class="card-datatable table-responsive pt-0">
-    <table class="datatables-basic table table-hover" id="data-table">
+    <table class="datatables-basic table table-hover" id="data-table2">
       <thead>
         <tr>
           <th>#</th>
-          <th>Fecha Registro</th>
           <th>Valor de Progreso</th>
           <th>Observación</th>
+          <th>Fecha Registro</th>
           <th>Opciones</th>
         </tr>
       </thead>
       <tbody class="animate__animated animate__fadeIn">
         <tr th:each="avance, cont: ${avances}">
           <td th:text="${cont.count}"></td>
-          <td th:text="${avances.valorProgreso}+' %'"></td>
-          <td th:text="${avances.observacion}"></td>
-          <td th:text="${#dates.format(avances.registro, 'dd/MM/yyyy hh:mm a')}"></td>
+          <td th:text="${avance.valorProgreso}+' %'"></td>
+          <td th:text="${avance.observacion}"></td>
+          <td th:text="${#dates.format(avance.registro, 'dd/MM/yyyy hh:mm a')}"></td>
           <td>
-            
+            <button type="button" class="btn btn-sm btn-info"
+              th:onclick="verAdjuntos([[${avance.idAvance}]])" data-bs-toggle="modal"
+              data-bs-target="#modalAdjuntos">
+              <i class="fa-solid fa-book-open"></i> Ver Adjuntos
+            </button>
+            <button type="button" class="btn btn-sm btn-primary"
+              th:onclick="cargarFormularioAvanceEdit([[${avance.idAvance}]], [[${avance.asignacion.idAsignacion}]])" data-bs-toggle="modal"
+              data-bs-target="#modalFormularioAvance">
+              <i class="fa-solid fa-pen-to-square"></i> Editar
+            </button>
+            <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminarAvance([[${avance.idAvance}]])">
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
           </td>
         </tr>
       </tbody>
@@ -34,7 +46,7 @@
 
 
 <script>
-  $('#data-table').DataTable({
+  $('#data-table2').DataTable({
     language: {
       "sProcessing": "Procesando...",
       "sLengthMenu": "Mostrar _MENU_ registros",

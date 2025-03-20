@@ -3,8 +3,9 @@
   <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
 </div>
 <form id="formularioAvance" method="post"
-  th:action="${edit}? @{/Avance/ModificarAvance} : @{/Avance/RegistrarAvance}" novalidate>
+  th:action="${edit}? @{/avance/ModificarAvance} : @{/avance/RegistrarAvance}" novalidate>
   <input type="hidden" th:if="${edit != null}" th:field="${avance.idAvance}">
+  <input type="hidden" name="idAsignacion" th:value="${asignacion.idAsignacion}">
   <div class="modal-body">
     <div class="row">
       <div class="col-12 col-md-6">
@@ -95,7 +96,7 @@
     });
 
     // Manejar el envío del formulario con jQuery
-    $('#formularioAvances').on('submit', function (e) {
+    $('#formularioAvance').on('submit', function (e) {
       e.preventDefault(); // Evitar el envío tradicional del formulario
 
       if (this.checkValidity() === false) {
@@ -116,7 +117,7 @@
 
       // Enviar los datos con jQuery y AJAX
       $.ajax({
-        url: '/Avance/RegistrarAvance',  // URL de tu controlador en Spring
+        url: '/avance/RegistrarAvance',  // URL de tu controlador en Spring
         type: 'POST',
         data: formData,
         processData: false,  // Importante para que jQuery no procese el FormData
@@ -127,8 +128,9 @@
             response,
             'success'
           );
-          cargarFormulario();
-          cargarTabla();
+          $('.modal').modal('hide');
+          cargarFormularioAvance();
+          cargarTablaAvance();
         },
         error: function (xhr, status, error) {
           console.error('Error:', error);

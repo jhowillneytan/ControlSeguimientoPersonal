@@ -35,7 +35,9 @@ public class ArchivoAdjuntoServiceImpl implements ArchivoAdjuntoService {
     @Override
     public void deleteById(Long idEntidad) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+        ArchivoAdjunto entidad = dao.findById(idEntidad).orElse(null);
+        entidad.setEstado("ELIMINADO");
+        dao.save(entidad);
     }
 
     @Override
@@ -43,4 +45,5 @@ public class ArchivoAdjuntoServiceImpl implements ArchivoAdjuntoService {
         // TODO Auto-generated method stub
         return dao.listarArchivosPorIdAvance(idAvance);
     }
+
 }

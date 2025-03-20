@@ -45,7 +45,6 @@ public class indexController {
     
     //@ValidarUsuarioAutenticado
     @GetMapping("/ControlSeguimiento")
-    @Transactional
     public String inicio(HttpServletRequest request, HttpSession session) {
 
         // Usuario usuario = usuarioService.buscarPorNombreUser("admin1");

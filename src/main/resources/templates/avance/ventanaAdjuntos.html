@@ -1,0 +1,130 @@
+<div class="modal-header">
+    <h4 class="modal-title">Archivos Adjuntos</h4>
+    <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <h6 class="text-muted">Lista de Archivos</h6>
+        <div class="nav-align-left nav-tabs-shadow">
+          <ul class="nav nav-tabs col-md-3" role="tablist">
+            <li class="nav-item" th:each="archivo, cont : ${archivos}">
+              <button type="button" th:class="${cont.count == 1 ? 'nav-link active' : 'nav-link'}" role="tab"
+                      data-bs-toggle="tab" th:data-bs-target="${'#navs-' + archivo.idArchivoAdjunto}"
+                      th:aria-controls="${'navs-' + archivo.idArchivoAdjunto}" 
+                      aria-selected="${cont.count == 1 ? 'true' : 'false'}"
+                      th:text="${archivo.nombre}">
+              </button>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div th:each="archivo, cont : ${archivos}" th:class="${cont.count == 1 ? 'tab-pane fade show active' : 'tab-pane fade'}"
+                 th:id="${'navs-' + archivo.idArchivoAdjunto}">
+              <div class="col-12  mb-1 d-flex justify-content-lg-between">
+                <h5 class="card-title" th:text="${archivo.nombre}"></h5>
+                <div>
+                  <button class="btn btn-danger" th:onclick="eliminarArchivo([[${archivo.idArchivoAdjunto}]], [[${archivo.avance.idAvance}]])"
+                  th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE') && evaluacion == null}">
+                    <i class="fa fa-trash"></i> Eliminar
+                  </button>
+                  <button class="btn btn-success" th:onclick="descargarDocumento([[${archivo.idArchivoAdjunto}]], [[${archivo.tipo}]], [[${archivo.nombre}]])">
+                    <i class="fa fa-download"></i> Descargar
+                  </button>
+                </div>
+              </div>
+              <embed th:src="@{'/uploads/' + ${archivo.ruta}}" th:type="${archivo.tipo}" frameborder="0"
+                     style="height: 600px; width: 100%;"></embed>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<script>
+    function descargarDocumento(idDocumento, tipo, nombre) {
+      fetch(`/archivoAjunto/optener/${idDocumento}`, {
+        method: 'GET',
+        headers: {
+          'Accept': tipo
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la descarga del archivo');
+          }
+          return response.blob(); // Obtiene el archivo como un Blob
+        })
+        .then(blob => {
+          // Crear un enlace para la descarga del archivo
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = nombre; // Nombre del archivo a descargar
+          document.body.appendChild(a);
+          a.click(); // Simula el clic para iniciar la descarga
+          a.remove(); // Limpia el enlace después de la descarga
+          window.URL.revokeObjectURL(url); // Libera el objeto URL creado
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  
+    function eliminarArchivo(id, avance) {
+      // Verifica si la sesión está activa antes de intentar eliminar
+      $.ajax({
+        url: "/cargar-datos",  // URL para verificar la sesión
+        method: "GET",
+        success: function () {
+          // Si la sesión es válida, procede con la eliminación
+          Swal.fire({
+            title: 'Eliminar Registro',
+            text: '¿Estás seguro de eliminar esta archivo?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Si el usuario confirma, realizar la llamada AJAX para eliminar
+              $.ajax({
+                url: "/archivoAjunto/eliminar/" + id,  // URL para eliminar el registro con el ID
+                type: 'POST',
+                success: function (response) {
+                  verAdjuntos(avance)
+                  Swal.fire(
+                    'Eliminado!',
+                    response,
+                    'success'
+                  );
+                },
+                error: function (xhr, status, error) {
+                  Swal.fire(
+                    'Error',
+                    'Hubo un problema al eliminar el registro. Por favor, inténtalo de nuevo.',
+                    'error'
+                  );
+                }
+              });
+            }
+          });
+        },
+        error: function (xhr) {
+          if (xhr.status === 401) {
+            // Si la sesión ha expirado, muestra una alerta con SweetAlert2
+            Swal.fire({
+              title: 'Sesión expirada',
+              text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+              icon: 'warning',
+              confirmButtonText: 'Ir al login'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/form-login';  // Redirige a la página de login
+              }
+            });
+          }
+        }
+      });
+    }
+  </script>

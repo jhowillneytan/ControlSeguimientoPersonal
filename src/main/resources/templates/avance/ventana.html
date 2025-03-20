@@ -1,12 +1,93 @@
 <div class="container-xxl flex-grow-1 container-p-y" id="contenido">
 
   <h4 class="py-3 mb-4"><span class="text-muted fw-light">Menu /</span>
-    <a type="button" th:href="@{/avance/ventana}">Asignaciones</a>
+    <a type="button" th:href="@{/asignacion/ventana}">Asignaciones</a>
     <th:block th:text="' /Administrar Avances'"></th:block>
     <input type="hidden" id="idAsignacion" th:value="${asignacion.idAsignacion}">
   </h4>
 
-  <div id="tablaRegistro"></div>
+<!-- Card informativo profesional para la entidad Actividad -->
+<div class="card border-0 shadow-lg rounded-3 overflow-hidden" th:if="${actividad != null}">
+  <!-- Cabecera con gradiente y prioridad -->
+  <div class="card-header p-3" th:classappend="${actividad.prioridad != null ? (actividad.prioridad.nivel == 'ALTA' ? 'bg-danger' : (actividad.prioridad.nivel == 'MEDIA' ? 'bg-warning' : 'bg-info')) : 'bg-primary'}" style="background: linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 100%);">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="fw-bold text-white mb-0">
+          <i class="fas fa-clipboard-list me-2"></i><span th:text="'Título de Actividad: '+${actividad.titulo}">Título de Actividad</span>
+        </h5>
+      </div>
+      <div class="text-white">
+        <span class="badge bg-white text-dark rounded-pill" th:if="${actividad.prioridad != null}">
+          <i class="fas fa-flag me-1" th:classappend="${actividad.prioridad.nivel == 'ALTA' ? 'text-danger' : (actividad.prioridad.nivel == 'MEDIA' ? 'text-warning' : 'text-info')}"></i>
+          <span th:text="'Prioridad: '+${actividad.prioridad.nivel}">Prioridad</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Cuerpo del card -->
+  <div class="card-body p-4">
+    <!-- Barra de progreso estilizada -->
+    <div class="position-relative mb-4">
+      <div class="progress rounded-pill" style="height: 20px;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+             th:style="'width: ' + ${actividad.progreso} + '%'" 
+             th:aria-valuenow="${actividad.progreso}" 
+             aria-valuemin="0" 
+             aria-valuemax="100"
+             th:classappend="${actividad.progreso < 30 ? 'bg-danger' : (actividad.progreso < 70 ? 'bg-warning' : 'bg-success')}">
+        </div>
+      </div>
+      <span class="position-absolute top-50 start-50 translate-middle fw-bold text-dark" 
+            th:text="${#numbers.formatPercent(actividad.progreso/100, 1, 0)}">
+      </span>
+    </div>
+    
+    <!-- Información principal -->
+    <div class="row g-3">
+      <!-- Fechas -->
+      <div class="col-md-6">
+        <div class="d-flex gap-3">
+          <div class="p-3 bg-light rounded-3 flex-grow-1">
+            <h6 class="fw-bold text-primary mb-2">
+              <i class="fas fa-calendar-alt me-2"></i>Fecha Inicio
+            </h6>
+            <p class="mb-0 text-muted" th:text="${#dates.format(actividad.fechaInicio, 'dd/MM/yyyy')}">01/01/2023</p>
+          </div>
+          <div class="p-3 bg-light rounded-3 flex-grow-1">
+            <h6 class="fw-bold text-primary mb-2">
+              <i class="fas fa-calendar-check me-2"></i>Fecha Fin
+            </h6>
+            <p class="mb-0 text-muted" th:text="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}">31/12/2023</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Proyecto -->
+      <div class="col-md-6" th:if="${actividad.proyecto != null}">
+        <div class="p-3 bg-light rounded-3 h-100">
+          <h6 class="fw-bold text-primary mb-2">
+            <i class="fas fa-project-diagram me-2"></i>Título
+          </h6>
+          <p class="mb-0 text-muted" th:text="${actividad.titulo}">Titulo de la Actividad</p>
+        </div>
+      </div>
+      
+      <!-- Descripción -->
+      <div class="col-12">
+        <div class="p-3 bg-light rounded-3">
+          <h6 class="fw-bold text-primary mb-2">
+            <i class="fas fa-align-left me-2"></i>Descripción
+          </h6>
+          <p class="mb-0 text-muted" th:text="${actividad.descripcion ?: 'Sin descripción disponible'}">Descripción de la actividad</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <br>
+
+  <div id="tablaRegistro2"></div>
 
   <div class="modal fade" id="modalFormularioAvance" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -14,9 +95,9 @@
     </div>
   </div>
 
-  <div class="modal fade" id="modalAsignaciones" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content" id="contenidoModalAsignaciones"></div>
+  <div class="modal fade" id="modalAdjuntos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content" id="contenidoModalAdjuntos"></div>
     </div>
   </div>
 
@@ -27,23 +108,110 @@
 <script>
 
   $(document).ready(function () {
-    cargarTabla();
+    cargarTablaAvance();
 
   });
 
-  function cargarTabla() {
+  function cargarTablaAvance() {
+    //console.log('ASIGNACION ==================== ' + $('#idAsignacion').val());
     $.ajax({
       type: 'POST',
-      url: "/avance/tablaRegistros/"+$('#idAsignacion').val(),  // Ruta del metodo del controlador en Spring Boot
+      url: "/avance/tablaRegistros/" + $('#idAsignacion').val(),  // Ruta del metodo del controlador en Spring Boot
       success: function (response) {
-        $("#tablaRegistro").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+        $("#tablaRegistro2").html(response);  // Actualiza el contenido del div con la respuesta del servidor
       }
     });
   }
 
-  function cargarFormulario() {
-      cargarFormularioAlert("/avance/formulario", "#contenidoModalAvance", "#formularioAvance");
+  function cargarFormularioAvance() {
+    console.log('ASIGNACION ==================== ' + $('#idAsignacion').val());
+    $.ajax({
+      type: 'POST',
+      url: "/avance/formulario/" + $('#idAsignacion').val(),  // Ruta del metodo del controlador en Spring Boot
+      success: function (response) {
+        $("#contenidoModalAvance").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+      }
+    });
+  }
+
+  function cargarFormularioAvanceEdit(avance, asignacion) {
+    $.ajax({
+      type: 'POST',
+      url: "/avance/formularioEdit/" + avance+"/"+asignacion,  // Ruta del metodo del controlador en Spring Boot
+      success: function (response) {
+        $("#contenidoModalAvance").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+      }
+    });
+  }
+
+  function verAdjuntos(asignacion) {
+    $.ajax({
+      type: 'POST',
+      url: "/avance/verAdjuntos/" + asignacion,  // Ruta del metodo del controlador en Spring Boot
+      success: function (response) {
+        $("#contenidoModalAdjuntos").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+      }
+    });
+  }
+
+  function eliminarAvance(id) {
+      //eliminarRegistroAlert(nombre, id, "/actividad/eliminar", cargarTabla);
+      $.ajax({
+        url: "/cargar-datos",  // URL para verificar la sesión
+        method: "GET",
+        success: function () {
+          // Si la sesión es válida, procede con la eliminación
+          Swal.fire({
+            title: 'Eliminar Registro',
+            text: '¿Estás seguro de eliminar a este registro?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Si el usuario confirma, realizar la llamada AJAX para eliminar
+              $.ajax({
+                url: "/avance/eliminar/" + id,  // URL para eliminar el registro con el ID
+                type: 'POST',
+                success: function (response) {
+                  cargarTablaAvance();  // Recargar la tabla (función pasada como parámetro)
+                  Swal.fire(
+                    'Eliminado!',
+                    response,
+                    'success'
+                  );
+                },
+                error: function (xhr, status, error) {
+                  Swal.fire(
+                    'Error',
+                    'Hubo un problema al eliminar el registro. Por favor, inténtalo de nuevo.',
+                    'error'
+                  );
+                }
+              });
+            }
+          });
+        },
+        error: function (xhr) {
+          if (xhr.status === 401) {
+            // Si la sesión ha expirado, muestra una alerta con SweetAlert2
+            Swal.fire({
+              title: 'Sesión expirada',
+              text: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+              icon: 'warning',
+              confirmButtonText: 'Ir al login'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/form-login';  // Redirige a la página de login
+              }
+            });
+          }
+        }
+      });
     }
+
   // function volver() {
   //   $.ajax({
   //     url: "/cargar-datos",

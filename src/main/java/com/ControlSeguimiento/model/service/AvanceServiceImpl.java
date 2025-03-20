@@ -39,9 +39,9 @@ public class AvanceServiceImpl implements AvanceService {
     }
 
     @Override
-    public List<Avance> listarAvancePorIdAsignacion(Long idAsignacion) {
+    public List<Avance> listarAvancePoridAsignacion(Long idAsignacion) {
         // TODO Auto-generated method stub
-        return dao.listarAvancePorIdAsignacion(idAsignacion);
+        return dao.listarAvancePoridAsignacion(idAsignacion);
     }
     
 }

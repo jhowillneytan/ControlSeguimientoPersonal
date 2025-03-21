@@ -35,8 +35,10 @@ public class AsignacionServiceImpl implements AsignacionService{
 
     @Override
     public void deleteById(Long idEntidad) {
-        //Asignacion asignacion = dao.findById(idEntidad).orElse(null);
-        dao.deleteById(idEntidad);
+        Asignacion asignacion = dao.findById(idEntidad).orElse(null);
+        asignacion.setEstado("ELIMINADO");
+        dao.save(asignacion);
+        //dao.deleteById(idEntidad);
     }
 
     @Override

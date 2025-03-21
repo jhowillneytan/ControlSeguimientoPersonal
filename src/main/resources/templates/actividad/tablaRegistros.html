@@ -32,7 +32,9 @@
           <td th:text="${#dates.format(actividad.fechaFin, 'dd/MM/yyyy')}"></td>
           <td>
             <ul class="list-group">
-              <li class="list-group-item list-group-item-action" th:each="asig: ${actividad.asignaciones}"
+              <!-- <li class="list-group-item list-group-item-action" th:each="asig: ${actividad.asignaciones}"
+                th:text="${asig.persona.nombreCompleto}"></li> -->
+                <li class="list-group-item list-group-item-action" th:each="asig: ${actividad.asignacionesOrdenadas}"
                 th:text="${asig.persona.nombreCompleto}"></li>
             </ul>
           </td>
@@ -53,7 +55,7 @@
               th:text="${actividad.estado}"></span>
           </td>
           <td>
-            <div class="progress" style="height: 25px;">
+            <!-- <div class="progress" style="height: 25px;">
               <div class="progress-bar" role="progressbar" 
                    th:style="'width: ' + ${actividad.progreso} + '%'" 
                    th:attr="aria-valuenow=${actividad.progreso}" 
@@ -61,6 +63,21 @@
                    aria-valuemax="100"
                    th:text="${#numbers.formatDecimal(actividad.progreso, 1, 1)} + ' %'">
               </div>
+            </div> -->
+            <div class="position-relative mb-4">
+              <div class="progress rounded-pill" style="height: 20px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
+                     th:style="'width: ' + ${actividad.progreso} + '%'" 
+                     th:aria-valuenow="${actividad.progreso}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100"
+                     th:classappend="${actividad.progreso < 30 ? 'bg-danger' : (actividad.progreso < 70 ? 'bg-warning' : 'bg-success')}">
+                </div>
+              </div>
+              <span class="position-absolute top-50 start-50 translate-middle fw-bold text-dark" 
+              th:classappend="${asignacion.actividad.progreso < 70 ? ' ' : 'text-white'}"
+                    th:text="${#numbers.formatPercent(actividad.progreso/100, 1, 0)}">
+              </span>
             </div>
           </td>
           <td th:text="${#dates.format(actividad.registro, 'dd/MM/yyyy hh:mm a')}"></td>

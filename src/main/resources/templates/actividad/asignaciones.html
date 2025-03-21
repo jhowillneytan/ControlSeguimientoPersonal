@@ -11,8 +11,10 @@
         <label for="select2Primary" class="form-label">Personas</label>
         <div class="select2-primary">
           <select id="select2Primary" class="select2 form-select" name="asignados" multiple>
-            <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
-              th:selected="${#lists.contains(actividad.asignaciones.![persona], persona)}"></option>
+            <!-- <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
+              th:selected="${#lists.contains(actividad.asignaciones.![persona], persona)}"></option> -->
+              <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
+              th:selected="${#lists.contains(actividad.asignacionesOrdenadas.![persona], persona)}"></option>
           </select>
           <div class="valid-feedback">Correcto!</div>
           <div class="invalid-feedback">Debe seleccionar una o varias personas.</div>

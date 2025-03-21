@@ -10,9 +10,9 @@ import com.ControlSeguimiento.model.entity.Asignacion;
 
 public interface AsignacionDao extends JpaRepository<Asignacion, Long>{
 
-    @Query("SELECT a FROM Asignacion a WHERE a.actividad = ?1")
+    @Query("SELECT a FROM Asignacion a WHERE a.actividad = ?1 AND a.estado != 'ELIMINADO'")
     List<Asignacion> findByActividad(Actividad actividad);
 
-    @Query("SELECT a FROM Asignacion a WHERE a.persona.idPersona = ?1")
+    @Query("SELECT a FROM Asignacion a WHERE a.persona.idPersona = ?1 AND a.estado != 'ELIMINADO'")
     List<Asignacion> listarAsignacionesPorIdPersona(Long idPersona);
 }

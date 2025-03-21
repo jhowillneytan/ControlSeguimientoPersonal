@@ -1,10 +1,13 @@
 package com.ControlSeguimiento.model.entity;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ControlSeguimiento.config.AuditoriaConfig;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,5 +51,15 @@ public class Actividad extends AuditoriaConfig {
 
     @OneToMany(mappedBy = "actividad", fetch = FetchType.EAGER)
     private List<Asignacion> asignaciones;
+
+    @JsonIgnore
+    public List<Asignacion> getAsignacionesOrdenadas() {
+        return asignaciones.stream() // Convierte la lista de asignaciones en un stream.
+                .filter(asignacion -> !"ELIMINADO".equals(asignacion.getEstado())) // Filtra las asignaciones cuyo
+                                                                                   // estado no es ELIMINADO.
+                // .sorted(Comparator.comparing(Asignacion::getFecha)) // Ordena las
+                // asignaciones por el campo 'fecha'.
+                .collect(Collectors.toList()); // Recoge el resultado en una lista.
+    }
 
 }

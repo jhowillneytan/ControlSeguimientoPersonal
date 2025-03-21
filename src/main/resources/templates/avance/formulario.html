@@ -129,8 +129,9 @@
             'success'
           );
           $('.modal').modal('hide');
-          cargarFormularioAvance();
-          cargarTablaAvance();
+          cargarAvances($('#idAsignacion').val());
+          //cargarFormularioAvance();
+          //cargarTablaAvance();
         },
         error: function (xhr, status, error) {
           console.error('Error:', error);

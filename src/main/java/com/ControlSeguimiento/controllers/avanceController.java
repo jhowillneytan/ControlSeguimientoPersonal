@@ -1,6 +1,7 @@
 package com.ControlSeguimiento.controllers;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -68,8 +69,20 @@ public class avanceController {
         }
 
         Asignacion asignacion = asignacionService.findById(IdAsignacion);
+        Actividad actividad = actividadService.findById(asignacion.getActividad().getIdActividad());
+
+        // double total = 0.0;
+        // //List<Avance> avances = avanceService.listarAvancePoridAsignacion(IdAsignacion);
+        // for (Asignacion as : actividad.getAsignaciones()) {
+        //     List<Avance> avances = avanceService.listarAvancePoridAsignacion(as.getIdAsignacion());
+        //     for (Avance av : avances) {
+        //         total = total + av.getValorProgreso();
+        //     }
+        // }
+
         model.addAttribute("asignacion", asignacion);
-        model.addAttribute("actividad", actividadService.findById(asignacion.getActividad().getIdActividad()));
+        model.addAttribute("actividad", actividad);
+        //model.addAttribute("totalProgreso", total);
         return "avance/ventana";
     }
 
@@ -102,6 +115,22 @@ public class avanceController {
     @RequestParam("idAsignacion") Long IdAsignacion,
     @RequestParam(value = "filepond", required = false) MultipartFile[] adjuntos) {
 
+        Asignacion asignacion = asignacionService.findById(IdAsignacion);
+        Actividad actividad = actividadService.findById(asignacion.getActividad().getIdActividad());
+        double total = actividad.getProgreso();
+        //List<Avance> avances = avanceService.listarAvancePoridAsignacion(IdAsignacion);
+        // for (Asignacion as : actividad.getAsignacionesOrdenadas()) {
+        //     List<Avance> avances = avanceService.listarAvancePoridAsignacion(as.getIdAsignacion());
+        //     for (Avance av : avances) {
+        //         total = total + av.getValorProgreso();
+        //     }
+        // }
+        total = total + avance.getValorProgreso();
+        
+        if (total > 100.0) {
+            return ResponseEntity.ok("El total valor del % del avance supera el 100%");
+        }
+
         Usuario user = (Usuario) request.getSession().getAttribute("usuario");
         Persona persona = personaService.buscarPersonaPorIdUsuario(user.getIdUsuario());
 
@@ -126,6 +155,10 @@ public class avanceController {
             }
         }
 
+        
+        actividad.setProgreso(total);
+        actividadService.save(actividad);
+
         return ResponseEntity.ok("Se realizó el registro correctamente");
     }
 
@@ -134,6 +167,23 @@ public class avanceController {
     @RequestParam("idAsignacion") Long IdAsignacion,
     @RequestParam(value = "filepond", required = false) MultipartFile[] adjuntos) {
         Avance avance = avanceService.findById(a.getIdAvance());
+        Asignacion asignacion = asignacionService.findById(IdAsignacion);
+        Actividad actividad = actividadService.findById(asignacion.getActividad().getIdActividad());
+        double total = actividad.getProgreso();
+        //List<Avance> avances = avanceService.listarAvancePoridAsignacion(IdAsignacion);
+        // for (Asignacion as : actividad.getAsignacionesOrdenadas()) {
+        //     List<Avance> avances = avanceService.listarAvancePoridAsignacion(as.getIdAsignacion());
+        //     for (Avance av : avances) {
+        //         total = total + av.getValorProgreso();
+        //     }
+        // }
+        total = total + avance.getValorProgreso();
+        
+        if (total > 100.0) {
+            return ResponseEntity.ok("El total valor del % del avance supera el 100%");
+        }
+
+
         Usuario user = (Usuario) request.getSession().getAttribute("usuario");
 
         avance.setObservacion(a.getObservacion());
@@ -154,6 +204,9 @@ public class avanceController {
                 archivoAdjuntoService.save(archivo);
             }
         }
+        
+        actividad.setProgreso(total);
+        actividadService.save(actividad);
 
         return ResponseEntity.ok("Se realizó el registro correctamente");
     }
@@ -171,6 +224,11 @@ public class avanceController {
         Avance avance = avanceService.findById(aId);
         avance.setEstado("ELIMINADO");
         avanceService.save(avance);
+
+        Actividad actividad = actividadService.findById(avance.getAsignacion().getActividad().getIdActividad());
+        double total = actividad.getProgreso();
+        total = total - avance.getValorProgreso();
+        actividad.setProgreso(total);
         return ResponseEntity.ok("Registro Eliminado");
     }
 

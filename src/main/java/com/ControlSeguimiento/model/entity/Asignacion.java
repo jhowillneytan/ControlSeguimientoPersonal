@@ -1,8 +1,11 @@
 package com.ControlSeguimiento.model.entity;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.ControlSeguimiento.config.AuditoriaConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
@@ -14,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +39,19 @@ public class Asignacion extends AuditoriaConfig {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_actividad")
     private Actividad actividad;
+
+    @OneToMany(mappedBy = "asignacion", fetch = FetchType.EAGER)
+    private List<Avance> avances;
+
+        @JsonIgnore
+    public List<Avance> getAvancesOrdenadas() {
+        return avances.stream() // Convierte la lista de asignaciones en un stream.
+                .filter(avance -> !"ELIMINADO".equals(avance.getEstado())) // Filtra las asignaciones cuyo
+                                                                                   // estado no es ELIMINADO.
+                // .sorted(Comparator.comparing(Asignacion::getFecha)) // Ordena las
+                // asignaciones por el campo 'fecha'.
+                .collect(Collectors.toList()); // Recoge el resultado en una lista.
+    }
 
     // @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     // @ManyToMany(fetch = FetchType.LAZY)

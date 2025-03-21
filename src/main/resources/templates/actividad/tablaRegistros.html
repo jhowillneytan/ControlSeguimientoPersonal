@@ -49,10 +49,25 @@
           <td>
             <span class="badge rounded-pill text-bg-primary" th:if="${actividad.estado == 'EN PROCESO'}"
               th:text="${actividad.estado}"></span>
-            <span class="badge rounded-pill text-bg-warning" th:if="${actividad.estado == 'ATRASADO'}"
-              th:text="${actividad.estado}"></span>
-            <span class="badge rounded-pill text-bg-success" th:if="${actividad.estado == 'FINALIZADO'}"
-              th:text="${actividad.estado}"></span>
+            <span class="badge rounded-pill text-bg-warning" 
+            th:if="${actividad.estado != 'FINALIZADO_RECHAZADO' 
+            && actividad.estado != 'FINALIZADO_RECHAZADO_RETRASO' 
+            && actividad.estado != 'FINALIZADO_VALIDADO_RETRASO' 
+            && actividad.estado != 'FINALIZADO_VALIDADO' 
+            && actividad.fechaFin &lt; #dates.createNow()}">
+              ATRASADO</span>
+            <span class="badge rounded-pill text-bg-danger" th:if="${actividad.estado == 'FINALIZADO_RECHAZADO'}">
+              RECHAZADA
+            </span>
+            <span class="badge rounded-pill text-bg-danger" th:if="${actividad.estado == 'FINALIZADO_RECHAZADO_RETRASO'}">
+              RECHAZADA CON RETRASO
+            </span>
+              <span class="badge rounded-pill text-bg-success" th:if="${actividad.estado == 'FINALIZADO_VALIDADO'}">
+                VALIDADA
+              </span>
+              <span class="badge rounded-pill text-bg-success" th:if="${actividad.estado == 'FINALIZADO_VALIDADO_RETRASO'}">
+                VALIDADA CON RETRASO
+              </span>
           </td>
           <td>
             <!-- <div class="progress" style="height: 25px;">
@@ -75,7 +90,7 @@
                 </div>
               </div>
               <span class="position-absolute top-50 start-50 translate-middle fw-bold text-dark" 
-              th:classappend="${asignacion.actividad.progreso < 70 ? ' ' : 'text-white'}"
+              th:classappend="${actividad.progreso < 70 ? ' ' : 'text-white'}"
                     th:text="${#numbers.formatPercent(actividad.progreso/100, 1, 0)}">
               </span>
             </div>
@@ -94,6 +109,10 @@
             </button>
             <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminar([[${actividad.idActividad}]])">
               <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+            <button type="button" class="btn btn-sm btn-primary"
+              th:onclick="cargarAvances([[${actividad.idActividad}]])">
+              <i class="fa fa-book-open"></i> Revizar
             </button>
           </td>
         </tr>

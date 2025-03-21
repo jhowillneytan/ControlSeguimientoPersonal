@@ -1,8 +1,8 @@
 <div class="card ">
   <div class="card-header d-flex justify-content-lg-between">
-    <h5>Registros de Actividades Asignadas</h5>
+    <h5>Registros de Avances</h5>
     <button type="button" class="btn btn-primary" onclick="cargarFormularioAvance()" data-bs-toggle="modal"
-      data-bs-target="#modalFormularioAvance">
+        data-bs-target="#modalFormularioAvance" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}">
       <i class="fa-solid fa-plus"></i> Agregar Avance
     </button>
   </div>
@@ -29,12 +29,13 @@
               data-bs-target="#modalAdjuntos">
               <i class="fa-solid fa-book-open"></i> Ver Adjuntos
             </button>
-            <button type="button" class="btn btn-sm btn-primary"
+            <button type="button" class="btn btn-sm btn-primary" th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}"
               th:onclick="cargarFormularioAvanceEdit([[${avance.idAvance}]], [[${avance.asignacion.idAsignacion}]])" data-bs-toggle="modal"
               data-bs-target="#modalFormularioAvance">
               <i class="fa-solid fa-pen-to-square"></i> Editar
             </button>
-            <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminarAvance([[${avance.idAvance}]])">
+            <button type="button" class="btn btn-sm btn-danger" th:onclick="eliminarAvance([[${avance.idAvance}]])"
+              th:if="${#lists.contains(session.roles.![nombre], 'RESPONSABLE')}">
               <i class="fa-solid fa-trash"></i> Eliminar
             </button>
           </td>

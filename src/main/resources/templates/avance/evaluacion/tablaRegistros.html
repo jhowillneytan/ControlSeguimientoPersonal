@@ -1,0 +1,121 @@
+<div class="card ">
+  <div class="card-header d-flex justify-content-lg-between">
+    <h5>Registros de Avances</h5>
+    <div th:if="${actividad.estado == 'EN PROCESO'}">
+      <button type="button" class="btn btn-primary" onclick="validarAvances()">
+        <i class="fa-solid fa-check me-2"></i> Aprobar Avance
+      </button>
+      <button type="button" class="btn btn-danger" onclick="rechazarAvances()">
+        <i class="fa-solid fa-close me-2"></i> Reprovar Avance
+      </button>
+    </div>
+    <div class="status-badges d-flex gap-1 align-items-center flex-wrap">
+      <!-- En proceso -->
+      <span th:if="${actividad.estado == 'EN PROCESO'}" 
+            class="badge text-bg-primary fw-medium">
+        <i class="bi bi-play-circle-fill me-1"></i>
+        <span th:text="${actividad.estado}"></span>
+      </span>
+      
+      <!-- Atrasado -->
+      <span th:if="${actividad.estado != 'FINALIZADO_RECHAZADO' 
+              && actividad.estado != 'FINALIZADO_RECHAZADO_RETRASO' 
+              && actividad.estado != 'FINALIZADO_VALIDADO_RETRASO' 
+              && actividad.estado != 'FINALIZADO_VALIDADO' 
+              && actividad.fechaFin &lt; #dates.createNow()}"
+            class="badge text-bg-warning fw-medium">
+        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+        ATRASADO
+      </span>
+      
+      <!-- Rechazada -->
+      <span th:if="${actividad.estado == 'FINALIZADO_RECHAZADO'}"
+            class="badge text-bg-danger fw-medium">
+        <i class="bi bi-x-circle-fill me-1"></i>
+        RECHAZADA
+      </span>
+      
+      <!-- Rechazada con retraso -->
+      <span th:if="${actividad.estado == 'FINALIZADO_RECHAZADO_RETRASO'}"
+            class="badge text-bg-danger fw-medium">
+        <i class="bi bi-x-circle-fill me-1"></i>
+        <i class="bi bi-clock-history me-1"></i>
+        RECHAZADA CON RETRASO
+      </span>
+      
+      <!-- Validada -->
+      <span th:if="${actividad.estado == 'FINALIZADO_VALIDADO'}"
+            class="badge text-bg-success fw-medium">
+        <i class="bi bi-check-circle-fill me-1"></i>
+        VALIDADA
+      </span>
+      
+      <!-- Validada con retraso -->
+      <span th:if="${actividad.estado == 'FINALIZADO_VALIDADO_RETRASO'}"
+            class="badge text-bg-success fw-medium">
+        <i class="bi bi-check-circle-fill me-1"></i>
+        <i class="bi bi-clock-history me-1"></i>
+        VALIDADA CON RETRASO
+      </span>
+    </div>
+  </div>
+  <div class="card-datatable table-responsive pt-0">
+    <table class="datatables-basic table table-hover" id="data-table2">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Autor</th>
+          <th>Valor de Progreso</th>
+          <th>Observación</th>
+          <th>Fecha Registro</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody class="animate__animated animate__fadeIn">
+        <tr th:each="avance, cont: ${avances}">
+          <td th:text="${cont.count}"></td>
+          <td th:text="${avance.asignacion.persona.nombreCompleto}+' %'"></td>
+          <td th:text="${avance.valorProgreso}+' %'"></td>
+          <td th:text="${avance.observacion}"></td>
+          <td th:text="${#dates.format(avance.registro, 'dd/MM/yyyy hh:mm a')}"></td>
+          <td>
+            <button type="button" class="btn btn-sm btn-info" th:onclick="verAdjuntos([[${avance.idAvance}]])"
+              data-bs-toggle="modal" data-bs-target="#modalAdjuntos">
+              <i class="fa-solid fa-book-open"></i> Ver Adjuntos
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<script>
+  $('#data-table2').DataTable({
+    language: {
+      "sProcessing": "Procesando...",
+      "sLengthMenu": "Mostrar _MENU_ registros",
+      "sZeroRecords": "No se encontraron resultados",
+      "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix": "",
+      "sSearch": "Buscar:",
+      "sUrl": "",
+      "sInfoThousands": ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst": "Primero",
+        "sLast": "Último",
+        "sNext": "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      }
+    },
+    "stateSave": true
+  });
+</script>

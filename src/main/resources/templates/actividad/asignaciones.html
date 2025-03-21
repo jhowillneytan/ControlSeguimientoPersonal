@@ -2,8 +2,7 @@
   <h4 class="modal-title">Asignar Responsables</h4>
   <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
 </div>
-<form id="formularioRegistroAsignacion" method="post"
-  th:action="@{/actividad/GuardarAsignaciones}" novalidate>
+<form id="formularioRegistroAsignacion" method="post" th:action="@{/actividad/GuardarAsignaciones}" novalidate>
   <input type="hidden" th:field="${actividad.idActividad}">
   <div class="modal-body">
     <div class="row">
@@ -13,7 +12,7 @@
           <select id="select2Primary" class="select2 form-select" name="asignados" multiple>
             <!-- <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
               th:selected="${#lists.contains(actividad.asignaciones.![persona], persona)}"></option> -->
-              <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
+            <option th:each="persona: ${personas}" th:value="${persona.idPersona}" th:text="${persona.nombreCompleto}"
               th:selected="${#lists.contains(actividad.asignacionesOrdenadas.![persona], persona)}"></option>
           </select>
           <div class="valid-feedback">Correcto!</div>
@@ -34,10 +33,6 @@
 
 <script>
   $(document).ready(function () {
-
-    // // Aplicar máscara a todos los elementos con clase datepickerD
-    // const dateInputs = $('.datepickerD');
-    // dateInputs.mask('99/99/9999');
 
     $('.select2').select2({
       dropdownParent: $('#formularioRegistroAsignacion')  // Especificar el parent para el dropdown
@@ -67,22 +62,55 @@
           if (response === 'Se realizaron las asignaciones correctamente') {
             cargarTabla();
             cargarFormulario();
-            $('#botonCerrarModalLoading').click();
-            Swal.fire(
-              'Registrado!',
-              response + '.',
-              'success'
-            );
+            //$('#botonCerrarModalLoading').click();
+            //$('#formularioRegistroAsignacion').closest('.modal').modal('hide');
+            Swal.fire({
+              title: 'Registrado!',
+              text: response + '.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // Cerrar modal después de confirmar
+                $('#botonCerrarModalLoading').click();
+              }
+            });
+          } else if (response === 'Se actualizaron las asignaciones correctamente') {
+            cargarTabla();
+            cargarFormulario();
+            //$('#botonCerrarModalLoading').click();
+            //$('#formularioRegistroAsignacion').closest('.modal').modal('hide');
+            Swal.fire({
+              title: 'Registrado!',
+              text: response + '.',
+              icon: 'success',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // Cerrar modal después de confirmar
+                $('#botonCerrarModalLoading').click();
+              }
+            });
           } else {
-            Swal.fire(
-              'Imposible Registrar!',
-              response + '.',
-              'error'
-            );
+            //$('#botonCerrarModalLoading').click();
+            //$('#formularioRegistroAsignacion').closest('.modal').modal('hide');
+            Swal.fire({
+              title: 'Imposible Registrar!',
+              text: response + '.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // Cerrar modal después de confirmar
+                $('#botonCerrarModalLoading').click();
+              }
+            });
           }
 
         },
         error: function (xhr, status, error) {
+          $('#botonCerrarModalLoading').click();
+          $('#formularioRegistroAsignacion').closest('.modal').modal('hide');
           Swal.fire(
             'Imposible Registrar!',
             'Ha ocurrido un error. Por favor, intenta nuevamente.' + xhr, status, error,

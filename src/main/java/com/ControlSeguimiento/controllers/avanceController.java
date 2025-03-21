@@ -1,5 +1,6 @@
 package com.ControlSeguimiento.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -230,6 +231,82 @@ public class avanceController {
         total = total - avance.getValorProgreso();
         actividad.setProgreso(total);
         return ResponseEntity.ok("Registro Eliminado");
+    }
+
+
+    // ===================== SECCION PARA EVALUADORES =====================
+    @PostMapping("/subVentanaEvaluador/{id}")
+    public String subVentanaEvaluador(HttpSession session, Model model, @PathVariable("id") Long idActividad) {
+
+        if (session.getAttribute("usuario") == null) {
+            // La sesión ha expirado o no existe
+            return "redirect:/form-login";
+        }
+
+        Actividad actividad = actividadService.findById(idActividad);
+
+        model.addAttribute("actividad", actividad);
+        return "avance/evaluacion/ventana";
+    }
+
+    @PostMapping("/tablaRegistrosEvaluador/{id}")
+    public String tablaRegistrosEvaluador(Model model, @PathVariable("id") Long idActividad) {
+        List<Avance> avances = new ArrayList<>();
+        Actividad actividad = actividadService.findById(idActividad);
+        for (Asignacion asignacion : actividad.getAsignacionesOrdenadas()) {
+            for (Avance avance : asignacion.getAvancesOrdenadas()) {
+                avances.add(avance);
+            }
+        }
+        model.addAttribute("actividad", actividad);
+        model.addAttribute("avances", avances);
+        return "avance/evaluacion/tablaRegistros";
+    }
+
+    @PostMapping("/verAdjuntosEvaluador/{idAvance}")
+    public String verAdjuntosEvaluador(Model model, @PathVariable("idAvance") Long idAvance) {
+        Avance avance = avanceService.findById(idAvance);
+        model.addAttribute("avance", avance);
+        model.addAttribute("archivos", archivoAdjuntoService.listarArchivosPorIdAvance(idAvance));
+        return "avance/evaluacion/ventanaAdjuntos";
+    }
+
+    @PostMapping("/validarAvances/{id}")
+    public ResponseEntity<String> aprobarAvances(Model model, @PathVariable("id") Long aId) {
+        Actividad actividad = actividadService.findById(aId);
+        for (Asignacion asignacion : actividad.getAsignacionesOrdenadas()) {
+            for (Avance avance : asignacion.getAvancesOrdenadas()) {
+                avance.setEstado("VALIDO");
+                avanceService.save(avance);
+            }
+        }
+        if (actividad.getFechaFin().before(new Date())) {
+            actividad.setEstado("FINALIZADO_VALIDADO_RETRASO");
+        } else {
+            actividad.setEstado("FINALIZADO_VALIDADO");
+            
+        }
+        actividadService.save(actividad);
+        return ResponseEntity.ok("Actividad Finalizada");
+    }
+
+    @PostMapping("/rechazarAvances/{id}")
+    public ResponseEntity<String> rechazarAvances(Model model, @PathVariable("id") Long aId) {
+        Actividad actividad = actividadService.findById(aId);
+        for (Asignacion asignacion : actividad.getAsignacionesOrdenadas()) {
+            for (Avance avance : asignacion.getAvancesOrdenadas()) {
+                avance.setEstado("RECHAZADO");
+                avanceService.save(avance);
+            }
+        }
+        if (actividad.getFechaFin().before(new Date())) {
+            actividad.setEstado("FINALIZADO_RECHAZADO_RETRASO");
+        } else {
+            actividad.setEstado("FINALIZADO_RECHAZADO");
+            
+        }
+        actividadService.save(actividad);
+        return ResponseEntity.ok("Actividad Finalizada");
     }
 
 }
